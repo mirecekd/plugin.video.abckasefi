@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+site/
+*.zip
+.ruff_cache/
+typings/
+SPEC.md

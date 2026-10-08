@@ -1,0 +1,217 @@
+# resources/language/resource.language.cs_cz/strings.po
+# Kodi Media Center language file
+# Addon Name: ABCKASEFI
+# Addon id: plugin.video.abckasefi
+msgid ""
+msgstr ""
+"Project-Id-Version: plugin.video.abckasefi\n"
+"Report-Msgid-Bugs-To: https://github.com/mirecekd/plugin.video.abckasefi/issues\n"
+"Language: cs_CZ\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+
+msgctxt "#30000"
+msgid "ABCKASEFI"
+msgstr "ABCKASEFI"
+
+msgctxt "#30001"
+msgid "Movies"
+msgstr "Filmy"
+
+msgctxt "#30002"
+msgid "Series"
+msgstr "Seriály"
+
+msgctxt "#30003"
+msgid "Search"
+msgstr "Hledat"
+
+msgctxt "#30004"
+msgid "TMDB lists"
+msgstr "Seznamy TMDB"
+
+msgctxt "#30005"
+msgid "Next page"
+msgstr "Další strana"
+
+msgctxt "#30006"
+msgid "Settings"
+msgstr "Nastavení"
+
+msgctxt "#30010"
+msgid "General"
+msgstr "Obecné"
+
+msgctxt "#30011"
+msgid "Catalog address"
+msgstr "Adresa katalogu"
+
+msgctxt "#30012"
+msgid "API token"
+msgstr "API token"
+
+msgctxt "#30013"
+msgid "Items per page"
+msgstr "Položek na stránku"
+
+msgctxt "#30014"
+msgid "Title language"
+msgstr "Jazyk názvů"
+
+msgctxt "#30015"
+msgid "Set up from a phone (QR code)"
+msgstr "Nastavit z telefonu (QR kód)"
+
+msgctxt "#30016"
+msgid "Test connection"
+msgstr "Otestovat připojení"
+
+msgctxt "#30017"
+msgid "Czech"
+msgstr "Čeština"
+
+msgctxt "#30018"
+msgid "Slovak"
+msgstr "Slovenština"
+
+msgctxt "#30019"
+msgid "English"
+msgstr "Angličtina"
+
+msgctxt "#30020"
+msgid "Address of your abckasefi-catalog service, for example http://192.168.1.10:8080 or https://catalog.example.com. HTTPS certificates are always verified."
+msgstr "Adresa vaší služby abckasefi-catalog, například http://192.168.1.10:8080 nebo https://catalog.example.com. Certifikáty HTTPS se vždy ověřují."
+
+msgctxt "#30021"
+msgid "Token that the catalog service requires. It is stored in plain text in the add-on data folder."
+msgstr "Token, který služba katalogu vyžaduje. Ukládá se jako prostý text do datové složky doplňku."
+
+msgctxt "#30022"
+msgid "How many titles to load on one page of a list (20 to 200)."
+msgstr "Kolik titulů se načte na jednu stranu seznamu (20 až 200)."
+
+msgctxt "#30023"
+msgid "Language of the titles and descriptions shown in lists."
+msgstr "Jazyk názvů a popisů zobrazených v seznamech."
+
+msgctxt "#30024"
+msgid "Shows a QR code. Scan it with a phone on the same network and fill in the settings in the phone's browser."
+msgstr "Zobrazí QR kód. Naskenujte ho telefonem ve stejné síti a nastavení vyplňte v prohlížeči telefonu."
+
+msgctxt "#30025"
+msgid "Checks that the catalog can be reached with the current address and token."
+msgstr "Ověří, že je katalog dostupný s aktuální adresou a tokenem."
+
+msgctxt "#30030"
+msgid "Set the catalog address in the add-on settings first."
+msgstr "Nejprve nastavte adresu katalogu v nastavení doplňku."
+
+msgctxt "#30031"
+msgid "Cannot reach the catalog. Check the address and the network."
+msgstr "Katalog není dostupný. Zkontrolujte adresu a síť."
+
+msgctxt "#30032"
+msgid "The catalog refused the token. Check the API token in the settings."
+msgstr "Katalog odmítl token. Zkontrolujte API token v nastavení."
+
+msgctxt "#30033"
+msgid "Cannot verify the server's HTTPS certificate. Check the date and time on the device, update script.module.certifi, or use a different catalog URL. The connection was not made."
+msgstr "Nelze ověřit certifikát HTTPS serveru. Zkontrolujte datum a čas v zařízení, aktualizujte script.module.certifi nebo použijte jinou adresu katalogu. Spojení nebylo navázáno."
+
+msgctxt "#30034"
+msgid "The catalog is still being built. Try again in a few minutes."
+msgstr "Katalog se ještě sestavuje. Zkuste to znovu za několik minut."
+
+msgctxt "#30035"
+msgid "The catalog returned an error."
+msgstr "Katalog vrátil chybu."
+
+msgctxt "#30036"
+msgid "Nothing found."
+msgstr "Nic nenalezeno."
+
+msgctxt "#30037"
+msgid "Season {}"
+msgstr "{}. série"
+
+msgctxt "#30038"
+msgid "Specials"
+msgstr "Speciály"
+
+msgctxt "#30039"
+msgid "No episode data for this series."
+msgstr "Pro tento seriál nejsou data o epizodách."
+
+msgctxt "#30040"
+msgid "Catalog OK (version {})"
+msgstr "Katalog v pořádku (verze {})"
+
+msgctxt "#30050"
+msgid "Set up from a phone"
+msgstr "Nastavení z telefonu"
+
+msgctxt "#30051"
+msgid "Scan this QR code with a phone on the same network."
+msgstr "Naskenujte tento QR kód telefonem ve stejné síti."
+
+msgctxt "#30052"
+msgid "Or open this address in the phone's browser:"
+msgstr "Nebo otevřete tuto adresu v prohlížeči telefonu:"
+
+msgctxt "#30053"
+msgid "Settings saved."
+msgstr "Nastavení uloženo."
+
+msgctxt "#30054"
+msgid "The phone setup timed out. Start it again."
+msgstr "Nastavení z telefonu vypršelo. Spusťte ho znovu."
+
+msgctxt "#30055"
+msgid "Cannot find the address of this device on the local network."
+msgstr "Nelze zjistit adresu tohoto zařízení v místní síti."
+
+msgctxt "#30056"
+msgid "Cannot start the setup server on this device."
+msgstr "Na tomto zařízení nelze spustit server pro nastavení."
+
+msgctxt "#30057"
+msgid "Save"
+msgstr "Uložit"
+
+msgctxt "#30058"
+msgid "A token is already set. Leave empty to keep it."
+msgstr "Token je již nastaven. Ponechte prázdné, pokud ho chcete zachovat."
+
+msgctxt "#30059"
+msgid "Done. The settings were saved in Kodi. You can close this page."
+msgstr "Hotovo. Nastavení bylo uloženo v Kodi. Tuto stránku můžete zavřít."
+
+msgctxt "#30060"
+msgid "The Nokturno add-on is not installed."
+msgstr "Doplněk Nokturno není nainstalován."
+
+msgctxt "#30061"
+msgid "The catalog address must start with http:// or https://."
+msgstr "Adresa katalogu musí začínat http:// nebo https://."
+
+msgctxt "#30062"
+msgid "By name"
+msgstr "Podle názvu"
+
+msgctxt "#30063"
+msgid "By rating"
+msgstr "Podle hodnocení"
+
+msgctxt "#30064"
+msgid "By year"
+msgstr "Podle roku"
+
+msgctxt "#30065"
+msgid "Invalid input."
+msgstr "Neplatný vstup."
+
+msgctxt "#30066"
+msgid "{}/{} watched"
+msgstr "{}/{} zhlédnuto"

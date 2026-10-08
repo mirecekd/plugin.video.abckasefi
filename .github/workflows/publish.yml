@@ -1,0 +1,77 @@
+name: publish-repo
+
+# Builds the Kodi repository (zips, addons.xml, sha256 files) and publishes it
+# to GitHub Pages. Triggered by a version tag (v0.1.0 ...).
+#
+# One-time setup:
+#   Settings -> Pages -> Source = "GitHub Actions".
+#   Settings -> Environments -> github-pages -> allow the tag pattern v*
+#   (the default rule allows only the default branch, a tag deploy is refused).
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install pytest Kodistubs certifi defusedxml
+      - run: python -m pytest -q
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      SITE_URL: >-
+        https://${{ github.repository_owner }}.github.io/${{
+        github.event.repository.name }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # all tags, so older zips can be rebuilt from `git archive`
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install defusedxml
+      - name: Build the repository site
+        run: python tools/build_repo.py --out site --tags --base-url "$SITE_URL"
+      - name: Check every published add-on zip with the Kodi checker
+        run: |
+          pip install kodi-addon-checker
+          for zip in site/plugin.video.abckasefi/*.zip; do
+            dir="$(mktemp -d)"
+            unzip -q "$zip" -d "$dir"
+            echo "== $zip"
+            kodi-addon-checker --branch omega --skip-dependency-checks \
+              "$dir/plugin.video.abckasefi"
+          done
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

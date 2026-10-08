@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- plugin.video.abckasefi/addon.xml -->
+<addon id="plugin.video.abckasefi" name="ABCKASEFI" version="0.1.0" provider-name="mirecekd">
+  <requires>
+    <import addon="xbmc.python" version="3.0.1"/>
+    <import addon="script.module.certifi" optional="true"/>
+    <import addon="plugin.video.nokturno" optional="true"/>
+  </requires>
+  <extension point="xbmc.python.pluginsource" library="default.py">
+    <provides>video</provides>
+  </extension>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="en_GB">ABeCedni KAtalog SErialu a FIlmu - alphabetical catalog of movies and series</summary>
+    <summary lang="cs_CZ">ABeCedni KAtalog SErialu a FIlmu - abecedni katalog filmu a serialu</summary>
+    <description lang="en_GB">ABCKASEFI browses a catalog of movies and series by letter A-Z, by TMDB lists (top rated, popular, trending) and by search, with Czech, Slovak or English titles. The catalog is a small service you run yourself (abckasefi-catalog); this add-on only lists titles and hands the playback over to the Nokturno add-on, which has to be installed and set up separately. Watched marks and resume points are Kodi's own. The add-on does not host, index or distribute any content. Set the catalog address and token in the add-on settings or scan the QR code with your phone.</description>
+    <description lang="cs_CZ">ABCKASEFI prochazi katalog filmu a serialu podle pismen A-Z, podle seznamu TMDB (nejlepe hodnocene, popularni, trend) a hledanim, s ceskymi, slovenskymi nebo anglickymi nazvy. Katalog je mala sluzba, kterou si provozujes sam (abckasefi-catalog); tento doplnek jen vypisuje tituly a prehravani preda doplnku Nokturno, ktery musi byt nainstalovany a nastaveny zvlast. Zhlednuto a pokracovani ve sledovani jsou nativni funkce Kodi. Doplnek zadny obsah nehostuje, neindexuje ani nesiri. Adresu katalogu a token nastavis v nastaveni doplnku nebo naskenovanim QR kodu telefonem.</description>
+    <disclaimer lang="en_GB">This add-on provides no content. What you play through Nokturno is your own responsibility.</disclaimer>
+    <disclaimer lang="cs_CZ">Doplnek neposkytuje zadny obsah. Za to, co prehravas pres Nokturno, odpovidas ty.</disclaimer>
+    <platform>all</platform>
+    <license>MIT</license>
+    <source>https://github.com/mirecekd/plugin.video.abckasefi</source>
+    <website>https://github.com/mirecekd/plugin.video.abckasefi</website>
+    <forum>https://github.com/mirecekd/plugin.video.abckasefi/issues</forum>
+    <assets>
+      <icon>icon.png</icon>
+      <fanart>fanart.png</fanart>
+    </assets>
+    <news>0.1.0 - First release: Movies and Series by letter A-Z, TMDB lists, search, paging, CZ/SK/EN titles, watched via Kodi, QR setup from a phone.</news>
+  </extension>
+</addon>

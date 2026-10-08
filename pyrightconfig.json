@@ -1,0 +1,17 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "extraPaths": [
+    ".",
+    ".venv/lib/python3.14/site-packages",
+    "tools"
+  ],
+  "include": [
+    "default.py",
+    "resources",
+    "tests",
+    "tools"
+  ],
+  "pythonVersion": "3.8",
+  "reportMissingModuleSource": "none"
+}

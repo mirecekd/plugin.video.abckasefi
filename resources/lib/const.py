@@ -1,0 +1,73 @@
+# resources/lib/const.py
+"""Constants shared by every module. User-visible text lives in strings.po; code refers to it by the ids below."""
+
+ADDON_ID = "plugin.video.abckasefi"
+NOKTURNO_ID = "plugin.video.nokturno"
+NOKTURNO_BASE = f"plugin://{NOKTURNO_ID}/"
+SELF_BASE = f"plugin://{ADDON_ID}/"
+
+KINDS = ("movie", "series")
+LANGS = ("cs", "sk", "en")  # index in the `lang` setting
+SORTS = ("name", "rating", "year")  # letter listings
+LIST_SORTS = ("tmdb", "rating", "votes", "year", "name")
+
+PER_PAGE_MIN = 20
+PER_PAGE_MAX = 200
+PER_PAGE_STEP = 10
+PER_PAGE_DEFAULT = 100
+HTTP_TIMEOUT = 20  # seconds
+REMOTE_TIMEOUT = 600  # seconds the phone-setup server stays open
+PNG_SCALE = 10  # pixels per QR module
+
+# --- localized string ids (strings.po); placeholders are {} and are filled with str.format ---
+S_ADDON_NAME = 30000
+S_MOVIES = 30001
+S_SERIES = 30002
+S_SEARCH = 30003
+S_TMDB_LISTS = 30004
+S_NEXT_PAGE = 30005
+S_SETTINGS = 30006
+S_CAT_GENERAL = 30010
+S_SET_URL = 30011
+S_SET_TOKEN = 30012
+S_SET_PER_PAGE = 30013
+S_SET_LANG = 30014
+S_SET_REMOTE = 30015
+S_SET_TEST = 30016
+S_LANG_CS = 30017
+S_LANG_SK = 30018
+S_LANG_EN = 30019
+S_HELP_URL = 30020
+S_HELP_TOKEN = 30021
+S_HELP_PER_PAGE = 30022
+S_HELP_LANG = 30023
+S_HELP_REMOTE = 30024
+S_HELP_TEST = 30025
+S_ERR_NOT_CONFIGURED = 30030
+S_ERR_NETWORK = 30031
+S_ERR_AUTH = 30032
+S_ERR_CERT = 30033
+S_ERR_BUILDING = 30034
+S_ERR_SERVER = 30035
+S_NO_RESULTS = 30036
+S_SEASON_N = 30037  # "{} season" - one placeholder: the season number
+S_SPECIALS = 30038
+S_NO_EPISODES = 30039
+S_TEST_OK = 30040  # one placeholder: the catalog version
+S_RM_TITLE = 30050
+S_RM_SCAN = 30051
+S_RM_OPEN = 30052
+S_RM_SAVED = 30053
+S_RM_TIMEOUT = 30054
+S_RM_NO_NETWORK = 30055
+S_RM_NO_SERVER = 30056
+S_RM_SAVE = 30057
+S_RM_KEEP_TOKEN = 30058
+S_RM_DONE_PAGE = 30059
+S_ERR_NO_NOKTURNO = 30060
+S_ERR_BAD_URL = 30061
+S_SORT_NAME = 30062
+S_SORT_RATING = 30063
+S_SORT_YEAR = 30064
+S_ERR_BAD_INPUT = 30065
+S_WATCHED_EPS = 30066  # two placeholders: watched, total
