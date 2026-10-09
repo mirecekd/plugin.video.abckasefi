@@ -3,8 +3,8 @@ name: publish-repo
 # Builds the Kodi repository (zips, addons.xml, sha256 files) and publishes it
 # to GitHub Pages on every push to main: the github-pages environment accepts
 # deployments from the default branch only, so a tag push is refused there.
-# Release zips are rebuilt from the v* tags (fetch-depth 0), so push the tag
-# first, then main, or run the workflow by hand.
+# Only the current version is published (Kodi installs the newest one listed in
+# addons.xml); older releases stay available as v* git tags.
 #
 # One-time setup:
 #   Settings -> Pages -> Source = "GitHub Actions".
@@ -41,15 +41,12 @@ jobs:
         github.event.repository.name }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          # all tags, so older zips can be rebuilt from `git archive`
-          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
       - run: pip install defusedxml
       - name: Build the repository site
-        run: python tools/build_repo.py --out site --tags --base-url "$SITE_URL"
+        run: python tools/build_repo.py --out site --base-url "$SITE_URL"
       - name: Check every published add-on zip with the Kodi checker
         run: |
           pip install kodi-addon-checker
