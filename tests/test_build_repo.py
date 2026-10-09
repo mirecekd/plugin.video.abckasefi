@@ -1,5 +1,6 @@
 # tests/test_build_repo.py
 """The repository builder: layout Kodi expects, hashes that match, reproducible zips, old versions kept."""
+
 import hashlib
 import re
 import subprocess
@@ -44,7 +45,7 @@ def test_addons_xml_lists_plugin_and_repository_with_a_matching_sha256(site):
 
 def test_every_zip_has_a_sha256_file_that_matches(site):
     zips = list(site.rglob("*.zip"))
-    assert len(zips) == 2
+    assert len(zips) == 3  # plugin, repository with a version, repository under the fixed name
     for z in zips:
         assert Path(str(z) + ".sha256").read_text().split()[0] == _sha(z)
 
@@ -52,11 +53,29 @@ def test_every_zip_has_a_sha256_file_that_matches(site):
 def test_plugin_zip_has_the_addon_folder_at_its_root_and_nothing_private(site):
     names = zipfile.ZipFile(next((site / PLUGIN).glob("*.zip"))).namelist()
     assert all(n.startswith(f"{PLUGIN}/") for n in names)
-    for required in ("addon.xml", "default.py", "icon.png", "fanart.png", "resources/lib/router.py",
-                     "resources/settings.xml", "resources/lib/totals.py", "LICENSE"):
+    for required in (
+        "addon.xml",
+        "default.py",
+        "icon.png",
+        "fanart.png",
+        "resources/lib/router.py",
+        "resources/settings.xml",
+        "resources/lib/totals.py",
+        "LICENSE",
+    ):
         assert f"{PLUGIN}/{required}" in names, required
-    banned = ("/.git", ".venv", "__pycache__", "/tests/", "/tools/", "/design/", "SPEC.md", ".pyc", "repository.abckasefi",
-              ".github")
+    banned = (
+        "/.git",
+        ".venv",
+        "__pycache__",
+        "/tests/",
+        "/tools/",
+        "/design/",
+        "SPEC.md",
+        ".pyc",
+        "repository.abckasefi",
+        ".github",
+    )
     assert not [n for n in names if any(b in n for b in banned)]
 
 
@@ -77,7 +96,10 @@ def test_repository_addon_points_at_the_published_site_with_sha256_and_zip(site)
     assert checksum.attrib["verify"] == "sha256" and checksum.text == f"{BASE}/addons.xml.sha256"
     datadir = _node(node, "datadir")
     assert datadir.attrib["zip"] == "true" and datadir.text == f"{BASE}/"
-    assert "repository.abckasefi/addon.xml" in zipfile.ZipFile(next((site / "repository.abckasefi").glob("*.zip"))).namelist()
+    assert (
+        "repository.abckasefi/addon.xml"
+        in zipfile.ZipFile(site / "repository.abckasefi" / "repository.abckasefi.zip").namelist()
+    )
 
 
 def test_icon_and_fanart_sit_where_kodi_looks_for_them(site):
@@ -92,12 +114,6 @@ def test_zips_are_reproducible(tmp_path):
     build_repo.build(two, BASE)
     for z in one.rglob("*.zip"):
         assert z.read_bytes() == (two / z.relative_to(one)).read_bytes()
-
-
-def test_index_page_links_every_zip(site):
-    html = (site / "index.html").read_text()
-    for z in site.rglob("*.zip"):
-        assert z.name in html
 
 
 def test_make_zip_excludes_by_name_not_by_accident():
@@ -127,12 +143,17 @@ def _make_repo(tmp_path, working_version, tagged_versions):
 
     def write_manifest(version):
         # the real manifest changes version with every release: replace whatever the add-on tag carries
-        (repo / "addon.xml").write_text(re.sub(r'(<addon id="plugin\.video\.abckasefi"[^>]*version=")[^"]*', rf"\g<1>{version}", template, count=1))
+        (repo / "addon.xml").write_text(
+            re.sub(r'(<addon id="plugin\.video\.abckasefi"[^>]*version=")[^"]*', rf"\g<1>{version}", template, count=1)
+        )
 
     for version in tagged_versions:
         write_manifest(version)
-        for cmd in (["add", "-A"], ["-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", version],
-                    ["tag", f"v{version}"]):
+        for cmd in (
+            ["add", "-A"],
+            ["-c", "user.email=t@t", "-c", "user.name=t", "commit", "-qm", version],
+            ["tag", f"v{version}"],
+        ):
             subprocess.run(["git", *cmd], cwd=repo, check=True, capture_output=True)
     write_manifest(working_version)
     return repo

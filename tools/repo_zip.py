@@ -1,5 +1,6 @@
 # tools/repo_zip.py
 """Zip and hash helpers for build_repo.py: reproducible add-on zips and their sha256 sidecar files."""
+
 import hashlib
 import io
 import re
@@ -10,8 +11,20 @@ from defusedxml import ElementTree
 
 PLUGIN_ID = "plugin.video.abckasefi"
 REPO_ID = "repository.abckasefi"
-EXCLUDE_DIRS = {".git", ".github", ".venv", "__pycache__", ".pytest_cache", ".ruff_cache", "tools", "tests", "site",
-                "typings", "design", REPO_ID}
+EXCLUDE_DIRS = {
+    ".git",
+    ".github",
+    ".venv",
+    "__pycache__",
+    ".pytest_cache",
+    ".ruff_cache",
+    "tools",
+    "tests",
+    "site",
+    "typings",
+    "design",
+    REPO_ID,
+}
 EXCLUDE_FILES = {".gitignore", "pyproject.toml", "pyrightconfig.json", "SPEC.md", ".DS_Store"}
 EXCLUDE_SUFFIXES = (".pyc", ".zip")
 FIXED_TIME = (2026, 1, 1, 0, 0, 0)  # reproducible zips: same input, same bytes, same sha256
@@ -67,12 +80,3 @@ def build_addons_xml(manifests):
     """addons.xml from addon.xml TEXTS (plugin first, repository second)."""
     body = "\n".join(strip_declaration(text).strip() for text in manifests)
     return f'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<addons>\n{body}\n</addons>\n'
-
-
-def index_html(versions, repo_version):
-    """A plain link list so the site also works as a Kodi file-manager source."""
-    link = '<li><a href="{0}/{0}-{1}.zip">{0}-{1}.zip</a>{2}</li>'
-    rows = [link.format(REPO_ID, repo_version, " (install this one)")]
-    rows += [link.format(PLUGIN_ID, v, "") for v in sorted(versions, key=version_key)]
-    return ('<!DOCTYPE html>\n<html><head><meta charset="utf-8"><title>ABCKASEFI Kodi repository</title></head>\n'
-            "<body>\n<h1>ABCKASEFI Kodi repository</h1>\n<ul>\n" + "\n".join(rows) + "\n</ul>\n</body></html>\n")

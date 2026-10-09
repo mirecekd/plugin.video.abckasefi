@@ -27,10 +27,14 @@ The add-on hosts, indexes and distributes no content. It only shows titles from 
 
 Install through the Kodi repository so that updates arrive automatically:
 
-1. Open <https://mirecekd.github.io/plugin.video.abckasefi/> and download the repository zip listed there (`repository.abckasefi-<version>.zip`, marked "install this one").
+1. Download the repository zip from <https://mirecekd.github.io/plugin.video.abckasefi/repository.abckasefi/repository.abckasefi.zip>.
 2. In Kodi open Settings, Add-ons, Install from zip file, and select the downloaded file.
 3. Open Install from repository, choose the ABCKASEFI repository and install ABCKASEFI from the video add-ons.
 4. Open the add-on settings and enter the catalog address and the API token.
+
+### Install from a file source
+
+The whole site is a plain list of links, so Kodi can use it as a file source. In Kodi open Settings, File manager, Add source, and enter the address <https://mirecekd.github.io/plugin.video.abckasefi/>. Then open Add-ons, Install from zip file, choose this source, open `repository.abckasefi` and select `repository.abckasefi.zip`. After that, continue with steps 3 and 4 above.
 
 ## Settings
 

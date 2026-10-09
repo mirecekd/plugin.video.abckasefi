@@ -6,19 +6,22 @@ Usage:  python3 tools/build_repo.py --out site [--base-url URL] [--tags]
 Layout written to --out (this is what GitHub Pages serves):
   addons.xml, addons.xml.sha256
   plugin.video.abckasefi/plugin.video.abckasefi-<ver>.zip (+ .sha256), icon.png, fanart.png
-  repository.abckasefi/repository.abckasefi-<ver>.zip (+ .sha256), icon.png
-  index.html            (a plain link list, so the folder also works as a Kodi "file manager" source)
+  repository.abckasefi/repository.abckasefi-<ver>.zip and repository.abckasefi.zip (same bytes, fixed name), each
+      with .sha256, plus addon.xml and icon.png
+  index.html in every folder (plain link lists, so the site also works as a Kodi "file manager" source)
 
 With --tags every `git tag -l 'v*'` is rebuilt from `git archive`, so older zips stay online (a Pages deploy
 replaces the whole site, and clients holding an older addons.xml still ask for older zips). addons.xml always
 advertises the NEWEST published version, whichever of the working tree or a tag it comes from.
 """
+
 import argparse
 import shutil
 import sys
 import tempfile
 from pathlib import Path
 
+import repo_pages
 import repo_tags
 import repo_zip
 from defusedxml import ElementTree
@@ -37,7 +40,7 @@ def collect_versions(tags):
     current = repo_zip.addon_version(ROOT / "addon.xml")
     versions = {current: repo_zip.make_zip(ROOT, PLUGIN_ID)}
     manifests = {current: (ROOT / "addon.xml").read_text(encoding="utf-8")}
-    for tag in (repo_tags.git_tags(ROOT) if tags else []):
+    for tag in repo_tags.git_tags(ROOT) if tags else []:
         built = repo_tags.zip_from_tag(ROOT, tag)
         if built and built[0] not in versions:
             versions[built[0]], manifests[built[0]] = built[1], built[2]
@@ -52,7 +55,9 @@ def write_repository_addon(repo_dir, base_url):
         folder = Path(staging)
         (folder / "addon.xml").write_text(repo_xml, encoding="utf-8")
         shutil.copy2(ROOT / REPO_ID / "icon.png", folder / "icon.png")
-        repo_zip.write_with_hash(repo_dir, f"{REPO_ID}-{version}.zip", repo_zip.make_zip(folder, REPO_ID))
+        data = repo_zip.make_zip(folder, REPO_ID)
+        repo_zip.write_with_hash(repo_dir, f"{REPO_ID}-{version}.zip", data)
+        repo_zip.write_with_hash(repo_dir, f"{REPO_ID}.zip", data)  # fixed link without a version number
     shutil.copy2(ROOT / REPO_ID / "icon.png", repo_dir / "icon.png")
     (repo_dir / "addon.xml").write_text(repo_xml, encoding="utf-8")
     return version, repo_xml
@@ -77,7 +82,7 @@ def build(out, base_url, tags=False):
     addons = repo_zip.build_addons_xml([manifests[newest], repo_xml]).encode("utf-8")
     (out / "addons.xml").write_bytes(addons)
     (out / "addons.xml.sha256").write_text(repo_zip.sha256_hex(addons) + "\n", encoding="utf-8")
-    (out / "index.html").write_text(repo_zip.index_html(versions, repo_version), encoding="utf-8")
+    repo_pages.write_pages(out, versions, repo_version)
     return sorted(versions, key=version_key)
 
 
