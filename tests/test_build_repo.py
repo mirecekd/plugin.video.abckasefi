@@ -1,6 +1,7 @@
 # tests/test_build_repo.py
 """The repository builder: layout Kodi expects, hashes that match, reproducible zips, old versions kept."""
 import hashlib
+import re
 import subprocess
 import sys
 import zipfile
@@ -124,7 +125,8 @@ def _make_repo(tmp_path, working_version, tagged_versions):
     subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
 
     def write_manifest(version):
-        (repo / "addon.xml").write_text(template.replace('version="0.1.0"', f'version="{version}"'))
+        # the real manifest changes version with every release: replace whatever the add-on tag carries
+        (repo / "addon.xml").write_text(re.sub(r'(<addon id="plugin\.video\.abckasefi"[^>]*version=")[^"]*', rf"\g<1>{version}", template, count=1))
 
     for version in tagged_versions:
         write_manifest(version)
