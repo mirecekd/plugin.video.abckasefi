@@ -6,7 +6,16 @@ import xbmcaddon
 import xbmcgui
 import xbmcplugin
 
-from . import api, detail, listing, listing_common, listing_recent, listing_series, texts, urls
+from . import (
+    api,
+    detail,
+    listing,
+    listing_common,
+    listing_recent,
+    listing_series,
+    texts,
+    urls,
+)
 from .const import (
     S_ADDON_NAME,
     S_ERR_AUTH,

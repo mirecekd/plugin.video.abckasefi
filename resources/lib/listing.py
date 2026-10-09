@@ -1,10 +1,12 @@
 # resources/lib/listing.py
 """Directory screens: root, kind menu, letters, titles (paged), search, TMDB lists. Each takes (handle, params)."""
+
 import xbmcgui
 
 from . import api, cfg, texts, urls
 from . import listing_common as common
 from .const import (
+    LIST_SORTS,
     S_MOVIES,
     S_NEXT_PAGE,
     S_NO_RESULTS,
@@ -14,13 +16,21 @@ from .const import (
     S_SETTINGS,
     S_SORT_NAME,
     S_SORT_RATING,
+    S_SORT_TMDB,
+    S_SORT_VOTES,
     S_SORT_YEAR,
     S_TMDB_LISTS,
     SORTS,
 )
 from .items import folder_item
 
-SORT_LABELS = {"name": S_SORT_NAME, "rating": S_SORT_RATING, "year": S_SORT_YEAR}
+SORT_LABELS = {
+    "name": S_SORT_NAME,
+    "rating": S_SORT_RATING,
+    "votes": S_SORT_VOTES,
+    "year": S_SORT_YEAR,
+    "tmdb": S_SORT_TMDB,
+}
 KIND_LABELS = {"movie": S_MOVIES, "series": S_SERIES}
 SEARCH_SORT = "popular"
 
@@ -34,23 +44,29 @@ def _show_folders(handle, entries):
 
 
 def root(handle, params):
-    _show_folders(handle, [
-        _folder(texts.t(S_MOVIES), action="kind", kind="movie"),
-        _folder(texts.t(S_SERIES), action="kind", kind="series"),
-        _folder(texts.t(S_SEARCH), action="search"),
-        _folder(texts.t(S_TMDB_LISTS), action="lists"),
-        _folder(texts.t(S_RECENT), action="recent"),
-        _folder(texts.t(S_SETTINGS), action="settings"),
-    ])
+    _show_folders(
+        handle,
+        [
+            _folder(texts.t(S_MOVIES), action="kind", kind="movie"),
+            _folder(texts.t(S_SERIES), action="kind", kind="series"),
+            _folder(texts.t(S_SEARCH), action="search"),
+            _folder(texts.t(S_TMDB_LISTS), action="lists"),
+            _folder(texts.t(S_RECENT), action="recent"),
+            _folder(texts.t(S_SETTINGS), action="settings"),
+        ],
+    )
 
 
 def kind_menu(handle, params):
     kind = common.check_kind(params.get("kind"))
-    _show_folders(handle, [
-        _folder("A-Z", action="letters", kind=kind),
-        _folder(texts.t(S_TMDB_LISTS), action="lists", kind=kind),
-        _folder(texts.t(S_SEARCH), action="search", kind=kind),
-    ])
+    _show_folders(
+        handle,
+        [
+            _folder("A-Z", action="letters", kind=kind),
+            _folder(texts.t(S_TMDB_LISTS), action="lists", kind=kind),
+            _folder(texts.t(S_SEARCH), action="search", kind=kind),
+        ],
+    )
 
 
 def _letter_order(entry):
@@ -62,9 +78,22 @@ def letters(handle, params):
     kind = common.check_kind(params.get("kind"))
     data = api.Catalog().letters(kind)
     valid = [entry for entry in data or [] if common.LETTER_RE.match(str(entry.get("letter", "")))]
-    _show_folders(handle, [
-        _folder(f"{entry['letter']} ({entry.get('n', 0)})", action="titles", kind=kind, letter=entry["letter"], page=1)
-        for entry in sorted(valid, key=_letter_order)])
+    _show_folders(
+        handle,
+        [
+            _folder(
+                f"{entry['letter']} ({entry.get('n', 0)})", action="titles", kind=kind, letter=entry["letter"], page=1
+            )
+            for entry in sorted(valid, key=_letter_order)
+        ],
+    )
+
+
+def _sort_switch(sort, order, **params):
+    """Folder that shows the current ordering and the next one in `order`, and opens the listing sorted by it."""
+    following = order[(order.index(sort) + 1) % len(order)]
+    label = f"{texts.t(SORT_LABELS[sort])} -> {texts.t(SORT_LABELS[following])}"
+    return _folder(label, **dict(params, sort=following, page=1))
 
 
 def _finish_page(handle, catalog, data, kind, page, next_params, head=()):
@@ -86,9 +115,7 @@ def titles(handle, params):
     data = catalog.titles(kind, letter, sort, page, cfg.per_page())
     head = []
     if page == 1:
-        following = SORTS[(SORTS.index(sort) + 1) % len(SORTS)]
-        label = f"{texts.t(SORT_LABELS[sort])} -> {texts.t(SORT_LABELS[following])}"
-        head.append(_folder(label, action="titles", kind=kind, letter=letter, sort=following, page=1))
+        head.append(_sort_switch(sort, SORTS, action="titles", kind=kind, letter=letter))
     next_params = {"action": "titles", "kind": kind, "letter": letter, "sort": sort}
     _finish_page(handle, catalog, data, kind, page, next_params, head)
 
@@ -123,7 +150,12 @@ def lists(handle, params):
 def tmdb_list(handle, params):
     kind = common.check_kind(params.get("kind"))
     key = common.check_key(params.get("key"))
+    sort = common.pick(params.get("sort"), LIST_SORTS, LIST_SORTS[0])
     page = common.page_number(params.get("page"))
     catalog = api.Catalog()
-    data = catalog.tmdb_list(kind, key, page, cfg.per_page())
-    _finish_page(handle, catalog, data, kind, page, {"action": "tmdb_list", "kind": kind, "key": key})
+    data = catalog.tmdb_list(kind, key, page, cfg.per_page(), sort)
+    head = []
+    if page == 1:
+        head.append(_sort_switch(sort, LIST_SORTS, action="tmdb_list", kind=kind, key=key))
+    next_params = {"action": "tmdb_list", "kind": kind, "key": key, "sort": sort}
+    _finish_page(handle, catalog, data, kind, page, next_params, head)

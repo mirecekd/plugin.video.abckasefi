@@ -1,5 +1,6 @@
 # tests/listing_support.py
 """Fakes and helpers shared by the listing tests: catalog items, a recording Catalog, and a router runner."""
+
 from resources.lib import router
 
 BASE = "plugin://plugin.video.abckasefi/"
@@ -41,8 +42,8 @@ class FakeCatalog:
     def lists(self, *a):
         return self._do("lists", *a)
 
-    def tmdb_list(self, *a, **k):
-        return self._do("tmdb_list", *a)
+    def tmdb_list(self, kind, key, page, per_page, sort="tmdb"):
+        return self._do("tmdb_list", kind, key, page, per_page, sort)
 
     def seasons(self, *a):
         return self._do("seasons", *a)

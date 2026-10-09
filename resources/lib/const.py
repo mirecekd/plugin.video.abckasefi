@@ -8,7 +8,7 @@ SELF_BASE = f"plugin://{ADDON_ID}/"
 
 KINDS = ("movie", "series")
 LANGS = ("cs", "sk", "en")  # index in the `lang` setting
-SORTS = ("name", "rating", "year")  # letter listings
+SORTS = ("name", "rating", "votes", "year")  # letter listings
 LIST_SORTS = ("tmdb", "rating", "votes", "year", "name")
 
 PER_PAGE_MIN = 20
@@ -73,3 +73,5 @@ S_ERR_BAD_INPUT = 30065
 S_WATCHED_EPS = 30066  # two placeholders: watched, total
 S_RECENT = 30067
 S_INFO = 30068
+S_SORT_VOTES = 30069
+S_SORT_TMDB = 30070

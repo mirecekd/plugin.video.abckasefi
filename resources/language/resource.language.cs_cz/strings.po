@@ -223,3 +223,11 @@ msgstr "Naposledy sledované"
 msgctxt "#30068"
 msgid "Information"
 msgstr "Informace"
+
+msgctxt "#30069"
+msgid "By votes"
+msgstr "Podle počtu hlasů"
+
+msgctxt "#30070"
+msgid "TMDB order"
+msgstr "Podle oblíbenosti TMDB"

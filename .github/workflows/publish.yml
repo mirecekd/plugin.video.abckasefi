@@ -1,16 +1,17 @@
 name: publish-repo
 
 # Builds the Kodi repository (zips, addons.xml, sha256 files) and publishes it
-# to GitHub Pages. Triggered by a version tag (v0.1.0 ...).
+# to GitHub Pages on every push to main: the github-pages environment accepts
+# deployments from the default branch only, so a tag push is refused there.
+# Release zips are rebuilt from the v* tags (fetch-depth 0), so push the tag
+# first, then main, or run the workflow by hand.
 #
 # One-time setup:
 #   Settings -> Pages -> Source = "GitHub Actions".
-#   Settings -> Environments -> github-pages -> allow the tag pattern v*
-#   (the default rule allows only the default branch, a tag deploy is refused).
 
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
   workflow_dispatch:
 
 permissions:

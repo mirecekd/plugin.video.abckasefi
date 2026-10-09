@@ -223,3 +223,11 @@ msgstr "Recently watched"
 msgctxt "#30068"
 msgid "Information"
 msgstr "Information"
+
+msgctxt "#30069"
+msgid "By votes"
+msgstr "By votes"
+
+msgctxt "#30070"
+msgid "TMDB order"
+msgstr "TMDB order"

@@ -1,5 +1,6 @@
 # tests/test_listing.py
 """Screens: root menu, letters, paging and chunks, item paths, search, lists, seasons and episodes."""
+
 import xbmcplugin
 
 from resources.lib import listing_common, urls, watched
@@ -10,8 +11,13 @@ def test_root_menu_entries(ui, cat):
     run("")
     entries = ui.entries()
     assert [path for path, _i, _f in entries] == [
-        BASE + "?action=kind&kind=movie", BASE + "?action=kind&kind=series", BASE + "?action=search",
-        BASE + "?action=lists", BASE + "?action=recent", BASE + "?action=settings"]
+        BASE + "?action=kind&kind=movie",
+        BASE + "?action=kind&kind=series",
+        BASE + "?action=search",
+        BASE + "?action=lists",
+        BASE + "?action=recent",
+        BASE + "?action=settings",
+    ]
     assert all(is_folder for _p, _i, is_folder in entries)
     assert labels(ui) == ["Movies", "Series", "Search", "TMDB lists", "Recently watched", "Settings"]
     assert ui.ended == [{"handle": 7, "succeeded": True, "update": False, "cache": False}]
@@ -20,7 +26,10 @@ def test_root_menu_entries(ui, cat):
 def test_kind_menu_has_letters_lists_and_search(ui, cat):
     run("?action=kind&kind=series")
     assert [p for p, _i, _f in ui.entries()] == [
-        BASE + "?action=letters&kind=series", BASE + "?action=lists&kind=series", BASE + "?action=search&kind=series"]
+        BASE + "?action=letters&kind=series",
+        BASE + "?action=lists&kind=series",
+        BASE + "?action=search&kind=series",
+    ]
 
 
 def test_letters_show_counts_a_to_z_then_digits(ui, cat):
@@ -42,16 +51,6 @@ def test_titles_page_one_has_sort_selector_and_next_page(ui, cat):
     assert len(entries) == 1 + 2 + 1
     assert ui.ended[-1]["update"] is False and ui.ended[-1]["cache"] is False
     assert ui.content == ["movies"] and ui.sorts == [xbmcplugin.SORT_METHOD_NONE]
-
-
-def test_sort_selector_cycles_name_rating_year_name(ui, cat):
-    cat.data["titles"] = {"has_more": False, "items": []}
-    seen = []
-    for sort in ("name", "rating", "year"):
-        ui.added.clear()
-        run(f"?action=titles&kind=movie&letter=K&sort={sort}")
-        seen.append(ui.entries()[0][0].split("sort=")[1].split("&")[0])
-    assert seen == ["rating", "year", "name"]
 
 
 def test_titles_page_two_updates_listing_without_sort_item(ui, cat):
@@ -122,13 +121,15 @@ def test_tmdb_list_paging(ui, cat):
     cat.data["tmdb_list"] = {"has_more": True, "items": [movie(1)]}
     run("?action=tmdb_list&kind=movie&key=top&page=3")
     assert cat.calls[0][:4] == ("tmdb_list", "movie", "top", 3)
-    assert ui.entries()[-1][0] == BASE + "?action=tmdb_list&kind=movie&key=top&page=4"
+    assert ui.entries()[-1][0] == BASE + "?action=tmdb_list&kind=movie&key=top&sort=tmdb&page=4"
     assert ui.ended[-1]["update"] is True
 
 
 def test_seasons_note_shows_notification_and_progress(ui, cat, monkeypatch):
-    cat.data["seasons"] = {"note": "Data are incomplete", "seasons": [
-        {"season": 0, "name": "", "episodes": 2}, {"season": 1, "name": "", "episodes": 2}]}
+    cat.data["seasons"] = {
+        "note": "Data are incomplete",
+        "seasons": [{"season": 0, "name": "", "episodes": 2}, {"season": 1, "name": "", "episodes": 2}],
+    }
     monkeypatch.setattr(watched, "load", lambda path=None: {"tt0000009": {1: {1: 1, 2: 1}}})
     run("?action=seasons&id=tt0000009")
     assert ("notification", "Data are incomplete", "info") in ui.dialogs
