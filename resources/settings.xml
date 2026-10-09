@@ -55,7 +55,9 @@
             <allowempty>true</allowempty>
           </constraints>
           <data>RunPlugin(plugin://plugin.video.abckasefi/?action=remote_setup)</data>
-          <control type="button" format="action"/>
+          <control type="button" format="action">
+            <close>true</close>
+          </control>
         </setting>
         <setting id="test_connection" type="action" label="30016" help="30025">
           <level>0</level>

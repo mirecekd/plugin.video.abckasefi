@@ -11,9 +11,9 @@ def test_root_menu_entries(ui, cat):
     entries = ui.entries()
     assert [path for path, _i, _f in entries] == [
         BASE + "?action=kind&kind=movie", BASE + "?action=kind&kind=series", BASE + "?action=search",
-        BASE + "?action=lists", BASE + "?action=settings"]
+        BASE + "?action=lists", BASE + "?action=recent", BASE + "?action=settings"]
     assert all(is_folder for _p, _i, is_folder in entries)
-    assert labels(ui) == ["Movies", "Series", "Search", "TMDB lists", "Settings"]
+    assert labels(ui) == ["Movies", "Series", "Search", "TMDB lists", "Recently watched", "Settings"]
     assert ui.ended == [{"handle": 7, "succeeded": True, "update": False, "cache": False}]
 
 

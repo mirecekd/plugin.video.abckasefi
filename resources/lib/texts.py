@@ -22,6 +22,7 @@ FALLBACK = {
     const.S_ERR_BAD_URL: "The catalog address must start with http:// or https://.",
     const.S_SORT_NAME: "By name", const.S_SORT_RATING: "By rating", const.S_SORT_YEAR: "By year",
     const.S_ERR_BAD_INPUT: "Invalid input.", const.S_WATCHED_EPS: "{}/{} watched",
+    const.S_RECENT: "Recently watched", const.S_INFO: "Information",
 }
 
 

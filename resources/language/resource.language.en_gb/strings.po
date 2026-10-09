@@ -215,3 +215,11 @@ msgstr "Invalid input."
 msgctxt "#30066"
 msgid "{}/{} watched"
 msgstr "{}/{} watched"
+
+msgctxt "#30067"
+msgid "Recently watched"
+msgstr "Recently watched"
+
+msgctxt "#30068"
+msgid "Information"
+msgstr "Information"

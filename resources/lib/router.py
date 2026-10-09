@@ -6,7 +6,7 @@ import xbmcaddon
 import xbmcgui
 import xbmcplugin
 
-from . import api, listing, listing_common, listing_series, texts, urls
+from . import api, detail, listing, listing_common, listing_recent, listing_series, texts, urls
 from .const import (
     S_ADDON_NAME,
     S_ERR_AUTH,
@@ -46,7 +46,10 @@ def remote_setup(handle=None, params=None):
     # imported lazily so this module loads even where remote.py (and its QR code) is not needed
     from . import remote
 
-    remote.run()
+    # The settings button closes (and saves) the settings dialog before this runs (<close> in settings.xml), so
+    # setSetting writes straight to disk instead of into a dialog that may be cancelled. Reopen it to show the result.
+    if remote.run():
+        xbmcaddon.Addon().openSettings()
 
 
 DIRECTORY_ACTIONS = {
@@ -59,8 +62,10 @@ DIRECTORY_ACTIONS = {
     "tmdb_list": listing.tmdb_list,
     "seasons": listing_series.seasons,
     "episodes": listing_series.episodes,
+    "recent": listing_recent.recently_watched,
 }
-PLAIN_ACTIONS = {"settings": open_settings, "test_connection": test_connection, "remote_setup": remote_setup}
+PLAIN_ACTIONS = {"settings": open_settings, "test_connection": test_connection, "remote_setup": remote_setup,
+                 "detail": detail.show}
 
 
 def show_error(error):

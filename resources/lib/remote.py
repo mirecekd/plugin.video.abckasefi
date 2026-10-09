@@ -51,6 +51,7 @@ def apply_result(clean):
         cfg.put("api_token", clean["api_token"])
     cfg.put("items_per_page", clean["items_per_page"])
     cfg.put("lang", clean["lang"])
+    log.log(f"remote setup stored: url set={bool(cfg.base_url())}, token set={bool(cfg.token())}")
 
 
 def wait_for_finish(session, dialog, timeout, monitor):

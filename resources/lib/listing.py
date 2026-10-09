@@ -8,6 +8,7 @@ from .const import (
     S_MOVIES,
     S_NEXT_PAGE,
     S_NO_RESULTS,
+    S_RECENT,
     S_SEARCH,
     S_SERIES,
     S_SETTINGS,
@@ -38,6 +39,7 @@ def root(handle, params):
         _folder(texts.t(S_SERIES), action="kind", kind="series"),
         _folder(texts.t(S_SEARCH), action="search"),
         _folder(texts.t(S_TMDB_LISTS), action="lists"),
+        _folder(texts.t(S_RECENT), action="recent"),
         _folder(texts.t(S_SETTINGS), action="settings"),
     ])
 

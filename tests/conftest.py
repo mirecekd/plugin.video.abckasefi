@@ -47,6 +47,9 @@ class FakeListItem:
     def setArt(self, art):
         self.art = art
 
+    def addContextMenuItems(self, entries):
+        self.context = list(entries)
+
 
 @pytest.fixture
 def cat(monkeypatch):

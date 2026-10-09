@@ -58,7 +58,7 @@ def test_bad_parameters_do_not_reach_the_catalog(ui, cat):
 
 def test_unknown_action_falls_back_to_root(ui, cat):
     run("?action=nope")
-    assert len(ui.entries()) == 5 and ui.ended[-1]["succeeded"] is True
+    assert len(ui.entries()) == 6 and ui.ended[-1]["succeeded"] is True
 
 
 def test_settings_action_opens_settings_and_releases_the_handle(ui, cat):
@@ -92,3 +92,15 @@ def test_argv_is_reread_on_every_run(ui, cat):
     run("?action=kind&kind=series", handle=4)
     assert [e["handle"] for e in ui.ended] == [3, 4]
     assert ui.entries()[0][0].endswith("kind=movie") and ui.entries()[3][0].endswith("kind=series")
+
+
+def test_remote_setup_reopens_settings_only_after_a_saved_setup(ui, cat, monkeypatch):
+    from resources.lib import remote
+
+    before = ui.settings_opened
+    monkeypatch.setattr(remote, "run", lambda *a, **k: True)
+    run("?action=remote_setup")
+    assert ui.settings_opened == before + 1
+    monkeypatch.setattr(remote, "run", lambda *a, **k: False)
+    run("?action=remote_setup")
+    assert ui.settings_opened == before + 1

@@ -9,7 +9,7 @@ Rules that make Kodi's own watched feature work (see SPEC.md):
 import xbmcgui
 
 from . import urls
-from .const import S_SPECIALS, S_WATCHED_EPS
+from .const import S_INFO, S_SPECIALS, S_WATCHED_EPS
 
 MOVIE, SERIES = "movie", "series"
 
@@ -20,7 +20,7 @@ def _tag(item, mediatype):
     return tag
 
 
-def _fill_title(tag, data):
+def fill_title(tag, data):
     tag.setTitle(data.get("title") or "")
     if data.get("original") and data["original"] != data.get("title"):
         tag.setOriginalTitle(data["original"])
@@ -35,7 +35,7 @@ def _fill_title(tag, data):
         tag.setIMDBNumber(data["id"])
 
 
-def _label(data):
+def label_of(data):
     title = data.get("title") or data.get("id") or "?"
     return f"{title} ({data['year']})" if data.get("year") else title
 
@@ -48,21 +48,23 @@ def _art(item, catalog, tt):
 
 def movie_item(data, catalog):
     """(path, ListItem, isFolder) for a playable movie."""
-    item = xbmcgui.ListItem(label=_label(data), offscreen=True)
-    _fill_title(_tag(item, MOVIE), data)
+    item = xbmcgui.ListItem(label=label_of(data), offscreen=True)
+    fill_title(_tag(item, MOVIE), data)
     _art(item, catalog, data["id"])
     item.setProperty("IsPlayable", "true")
+    add_info_menu(item, data["id"])
     return urls.nokturno_movie_url(data["id"]), item, False
 
 
 def series_item(data, catalog, watched=None):
     """(path, ListItem, isFolder) for a series folder; `watched` = (watched_episodes, total) or None."""
-    item = xbmcgui.ListItem(label=_label(data), offscreen=True)
+    item = xbmcgui.ListItem(label=label_of(data), offscreen=True)
     tag = _tag(item, "tvshow")
-    _fill_title(tag, data)
+    fill_title(tag, data)
     tag.setTvShowTitle(data.get("title") or "")
     _art(item, catalog, data["id"])
     apply_progress(item, tag, watched)
+    add_info_menu(item, data["id"])
     return urls.build_url(action="seasons", id=data["id"]), item, True
 
 
@@ -97,6 +99,13 @@ def episode_item(tt, season, data, series_title, catalog):
         item.setArt({"thumb": data["still_url"], "icon": data["still_url"]})
     item.setProperty("IsPlayable", "true")
     return urls.nokturno_episode_url(tt, season, number), item, False
+
+
+def add_info_menu(item, tt):
+    """Context menu entry that opens the full information (plot, cast, director) of a title on demand."""
+    from .texts import t
+
+    item.addContextMenuItems([(t(S_INFO), f"RunPlugin({urls.build_url(action='detail', id=tt)})")])
 
 
 def folder_item(label, url, icon="DefaultFolder.png"):

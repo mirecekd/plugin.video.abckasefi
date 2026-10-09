@@ -209,3 +209,10 @@ def test_addon_xml_id_matches_const():
     root = ET.parse(ROOT / "addon.xml").getroot()
     assert root.tag == "addon"
     assert root.get("id") == const.ADDON_ID
+
+
+def test_remote_setup_button_closes_and_saves_the_dialog_first():
+    # regression: setSetting called while the settings dialog is open lands in the dialog, which is discarded on cancel
+    _, settings = setting_elements()
+    element = next(s for s in settings if s.get("id") == "remote_setup")
+    assert element.findtext("control/close") == "true"
