@@ -1,5 +1,6 @@
 # tests/test_listing_router.py
 """Router: error mapping per ApiError kind, parameter checks, unknown action, plain actions."""
+
 import pytest
 
 from resources.lib import api
@@ -8,15 +9,18 @@ from tests.listing_support import run
 END_FAILED = {"handle": 7, "succeeded": False, "update": False, "cache": True}
 
 
-@pytest.mark.parametrize("kind,text,dialog", [
-    (api.NETWORK, "Cannot reach the catalog. Check the address and the network.", "notification"),
-    (api.AUTH, "The catalog refused the token. Check the API token in the settings.", "notification"),
-    (api.BUILDING, "The catalog is still being built. Try again in a few minutes.", "notification"),
-    (api.SERVER, "The catalog returned an error.", "notification"),
-    (api.CERT, "Cannot verify the server's HTTPS certificate.", "ok"),
-    (api.NOT_CONFIGURED, "Set the catalog address in the add-on settings first.", "yesno"),
-    (api.BAD_URL, "The catalog address must start with http:// or https://.", "yesno"),
-])
+@pytest.mark.parametrize(
+    "kind,text,dialog",
+    [
+        (api.NETWORK, "Cannot reach the catalog. Check the address and the network.", "notification"),
+        (api.AUTH, "The catalog refused the token. Check the API token in the settings.", "notification"),
+        (api.BUILDING, "The catalog is still being built. Try again in a few minutes.", "notification"),
+        (api.SERVER, "The catalog returned an error.", "notification"),
+        (api.CERT, "Cannot verify the server's HTTPS certificate.", "ok"),
+        (api.NOT_CONFIGURED, "Set the catalog address in the add-on settings first.", "yesno"),
+        (api.BAD_URL, "The catalog address must start with http:// or https://.", "yesno"),
+    ],
+)
 def test_api_error_kinds_map_to_message_and_fail_the_directory(ui, cat, kind, text, dialog):
     cat.data["letters"] = api.ApiError(kind)
     run("?action=letters&kind=movie")
@@ -91,7 +95,7 @@ def test_argv_is_reread_on_every_run(ui, cat):
     run("?action=kind&kind=movie", handle=3)
     run("?action=kind&kind=series", handle=4)
     assert [e["handle"] for e in ui.ended] == [3, 4]
-    assert ui.entries()[0][0].endswith("kind=movie") and ui.entries()[3][0].endswith("kind=series")
+    assert ui.entries()[0][0].endswith("kind=movie") and ui.entries()[4][0].endswith("kind=series")
 
 
 def test_remote_setup_reopens_settings_only_after_a_saved_setup(ui, cat, monkeypatch):

@@ -41,6 +41,7 @@ def kind_menu(handle, params):
     show_folders(
         handle,
         [
+            folder(texts.t(S_RECENT), action="recent", kind=kind),
             folder("A-Z", action="letters", kind=kind),
             folder(texts.t(S_TMDB_LISTS), action="lists", kind=kind),
             folder(texts.t(S_SEARCH), action="search", kind=kind),

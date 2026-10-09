@@ -38,8 +38,9 @@ def _series_entry(tt, season, number, data, catalog):
 
 
 def recently_watched(handle, params):
+    kind = common.check_kind(params["kind"]) if params.get("kind") else None  # no kind = movies and series
     catalog = api.Catalog()
-    found = recent.recent()
+    found = recent.recent(kind=kind)
     with ThreadPoolExecutor(max_workers=WORKERS) as pool:
         details = list(pool.map(lambda entry: _title(catalog, entry[1]), found))
     entries = []

@@ -45,7 +45,7 @@ def test_search_and_tmdb_list_set_plot(ui, cat):
 
 
 def test_recently_watched_movie_gets_plot(ui, cat, monkeypatch):
-    monkeypatch.setattr(recent, "recent", lambda: [("movie", "tt0000001")])
+    monkeypatch.setattr(recent, "recent", lambda **_kwargs: [("movie", "tt0000001")])
     cat.data["title"] = {"title": "M", "overview": "Seen plot"}
     run("?action=recent")
     assert ui.entries()[0][1].tag.calls["setPlot"] == ("Seen plot",)

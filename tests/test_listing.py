@@ -23,9 +23,10 @@ def test_root_menu_entries(ui, cat):
     assert ui.ended == [{"handle": 7, "succeeded": True, "update": False, "cache": False}]
 
 
-def test_kind_menu_has_letters_lists_and_search(ui, cat):
+def test_kind_menu_has_recent_letters_lists_and_search(ui, cat):
     run("?action=kind&kind=series")
     assert [p for p, _i, _f in ui.entries()] == [
+        BASE + "?action=recent&kind=series",
         BASE + "?action=letters&kind=series",
         BASE + "?action=lists&kind=series",
         BASE + "?action=search&kind=series",

@@ -16,6 +16,8 @@ from .const import NOKTURNO_BASE
 from .log import log
 
 MAX_ITEMS = 30
+MAX_ROWS = 2000  # rows read before the per-title dedup; a series has many episode rows
+KIND_NEEDLES = {"movie": "&type=movie&", "series": "&type=series&"}  # as written by urls.py
 MOVIE_RE = re.compile(r"[?&]id=(tt\d+)(?:&|$)")
 PLAY_RE = re.compile(r"[?&]action=play(?:&|$)")
 
@@ -29,14 +31,18 @@ class State(NamedTuple):
     total_seconds: float
 
 
-def _rows(path, tt=None):
-    """[(strFilename, State)], newest last-played first (files with only a resume point come after, newest row first)."""
+def _rows(path, tt=None, kind=None):
+    """[(strFilename, State)], newest last-played first (files with only a resume point come after, newest row first).
+
+    `tt` limits the rows to one series, `kind` ('movie' | 'series') to that type; both filter before the row limit.
+    """
     try:
         conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=2)
     except sqlite3.Error as exc:
         log(f"recent: cannot open the video database ({type(exc).__name__})")
         return []
     needle = "" if tt is None else f"id={tt}%3A"  # empty = no series filter
+    kind_needle = KIND_NEEDLES.get(kind or "", "")  # empty = no type filter
     try:
         # a title is recent when Kodi stored a last-played time or a resume bookmark (type 1) for its Nokturno URL
         cur = conn.execute(
@@ -46,8 +52,9 @@ def _rows(path, tt=None):
             "LEFT JOIN bookmark b ON b.idFile = f.idFile AND b.type = 1 "
             "WHERE p.strPath = ? AND (COALESCE(f.lastPlayed, '') <> '' OR b.idBookmark IS NOT NULL) "
             "AND (? = '' OR instr(f.strFilename, ?) > 0) "
-            "ORDER BY COALESCE(f.lastPlayed, '') DESC, f.idFile DESC LIMIT 400",
-            (NOKTURNO_BASE, needle, needle),
+            "AND (? = '' OR instr(f.strFilename, ?) > 0) "
+            "ORDER BY COALESCE(f.lastPlayed, '') DESC, f.idFile DESC LIMIT ?",
+            (NOKTURNO_BASE, needle, needle, kind_needle, kind_needle, MAX_ROWS),
         )
         return [
             (name, State(played, int(count), float(resume), float(total)))
@@ -71,16 +78,18 @@ def parse(filename):
     return ("movie", movie.group(1)) if movie and "type=movie" in filename else None
 
 
-def recent_with_state(path=None, limit=MAX_ITEMS):
+def recent_with_state(path=None, limit=MAX_ITEMS, kind=None):
     """Newest first: [(entry, State)], entry = ('movie', tt) | ('episode', tt, season, episode); one per movie and series.
 
     The episode kept for a series is the one played last (newest last-played stamp), not the highest episode number.
+    `kind` ('movie' | 'series'; anything else = both) is applied before `limit`, so the limit counts only that type.
     """
     path = path or watched.db_path()
+    wanted = {"movie": "movie", "series": "episode"}.get(kind or "")
     out, seen = [], set()
-    for filename, state in _rows(path) if path else []:
+    for filename, state in _rows(path, kind=kind) if path else []:
         entry = parse(filename)
-        if entry is None or entry[1] in seen:
+        if entry is None or entry[1] in seen or (wanted and entry[0] != wanted):
             continue
         seen.add(entry[1])
         out.append((entry, state))
@@ -89,9 +98,9 @@ def recent_with_state(path=None, limit=MAX_ITEMS):
     return out
 
 
-def recent(path=None, limit=MAX_ITEMS):
+def recent(path=None, limit=MAX_ITEMS, kind=None):
     """Newest first: [('movie', tt) | ('episode', tt, season, episode)], one entry per movie and per series."""
-    return [entry for entry, _state in recent_with_state(path, limit)]
+    return [entry for entry, _state in recent_with_state(path, limit, kind)]
 
 
 def last_episode(tt, path=None):
