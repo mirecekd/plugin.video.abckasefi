@@ -1,6 +1,8 @@
 # tests/listing_support.py
 """Fakes and helpers shared by the listing tests: catalog items, a recording Catalog, and a router runner."""
 
+from typing import ClassVar
+
 from resources.lib import router
 
 BASE = "plugin://plugin.video.abckasefi/"
@@ -17,8 +19,8 @@ def series(n):
 class FakeCatalog:
     """Replaces api.Catalog; `calls` records (method, args), `data` maps method name -> result or exception."""
 
-    data = {}
-    calls = []
+    data: ClassVar[dict] = {}
+    calls: ClassVar[list] = []
 
     def __init__(self, *args, **kwargs):
         pass
@@ -33,8 +35,16 @@ class FakeCatalog:
     def letters(self, *a):
         return self._do("letters", *a)
 
-    def titles(self, *a):
-        return self._do("titles", *a)
+    def titles(self, kind, letter, sort, page, per_page, prefix=None, exact=False):
+        return self._do("titles", kind, letter, sort, page, per_page, prefix, exact)
+
+    def prefixes(self, kind, prefix):
+        """Answers from data["prefixes"], a dict prefix -> API answer (or one exception for every prefix)."""
+        answers = FakeCatalog.data.get("prefixes")
+        FakeCatalog.calls.append(("prefixes", kind, prefix))
+        if isinstance(answers, Exception):
+            raise answers
+        return (answers or {}).get(prefix)
 
     def search(self, *a):
         return self._do("search", *a)

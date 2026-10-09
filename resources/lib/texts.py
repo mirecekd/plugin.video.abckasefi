@@ -41,6 +41,8 @@ FALLBACK = {
     const.S_INFO: "Information",
     const.S_SORT_VOTES: "By votes",
     const.S_SORT_TMDB: "TMDB order",
+    const.S_EXACT_FOLDER: "{} (exact, {})",
+    const.S_OTHER_FOLDER: "Other ({})",
 }
 
 

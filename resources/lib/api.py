@@ -1,5 +1,6 @@
 # resources/lib/api.py
 """Client for the abckasefi-catalog HTTP API (stdlib urllib; HTTPS is always certificate-verified)."""
+
 import json
 import ssl
 import urllib.error
@@ -12,7 +13,14 @@ from .log import log
 from .urls import check_tt
 
 NOT_CONFIGURED, NETWORK, AUTH, CERT, BUILDING, SERVER, BAD_URL = (
-    "not_configured", "network", "auth", "cert", "building", "server", "bad_url")
+    "not_configured",
+    "network",
+    "auth",
+    "cert",
+    "building",
+    "server",
+    "bad_url",
+)
 
 
 class ApiError(Exception):
@@ -56,8 +64,7 @@ def _read(url, timeout, context):
     if not url.startswith(("http://", "https://")):
         raise ApiError(BAD_URL)
     # Only http(s) reaches this line (checked above) and _open() has no handler for any other scheme.
-    request = urllib.request.Request(  # noqa: S310
-        url, headers={"Accept": "application/json", "User-Agent": "abckasefi-kodi/0.1"})
+    request = urllib.request.Request(url, headers={"Accept": "application/json", "User-Agent": "abckasefi-kodi/0.1"})
     with _open(request, timeout, context) as response:
         raw = response.read().decode("utf-8")
     try:
@@ -107,8 +114,16 @@ class Catalog:
     def letters(self, kind):
         return self._get("/v1/letters", type=kind)
 
-    def titles(self, kind, letter, sort, page, per_page):
-        return self._get("/v1/titles", type=kind, letter=letter, sort=sort, page=page, per_page=per_page, lang=self.lang)
+    def titles(self, kind, letter, sort, page, per_page, prefix=None, exact=False):
+        """One page of titles; with `prefix` (a-z0-9) the letter is ignored by the API, `exact` keeps only skey == prefix."""
+        params = {"type": kind, "letter": letter, "sort": sort, "page": page, "per_page": per_page, "lang": self.lang}
+        if prefix:
+            params.update(prefix=prefix, exact=1 if exact else None)
+        return self._get("/v1/titles", **params)
+
+    def prefixes(self, kind, prefix):
+        """{prefix,total,exact,children:[{prefix,n}]} for the titles whose normalized name starts with `prefix`."""
+        return self._get("/v1/prefixes", type=kind, prefix=prefix)
 
     def search(self, query, kind, sort, limit):
         return self._get("/v1/search", q=query, type=kind, sort=sort, limit=limit, lang=self.lang)
@@ -117,7 +132,9 @@ class Catalog:
         return self._get("/v1/lists")
 
     def tmdb_list(self, kind, key, page, per_page, sort="tmdb"):
-        return self._get(f"/v1/list/{quote(kind)}/{quote(key)}", page=page, per_page=per_page, sort=sort, lang=self.lang)
+        return self._get(
+            f"/v1/list/{quote(kind)}/{quote(key)}", page=page, per_page=per_page, sort=sort, lang=self.lang
+        )
 
     def title(self, tt):
         return self._get(f"/v1/title/{check_tt(tt)}", lang=self.lang)

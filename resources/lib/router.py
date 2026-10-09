@@ -1,5 +1,6 @@
 # resources/lib/router.py
 """Entry dispatcher: parses the plugin argv, runs one action and turns every failure into a message, never a traceback."""
+
 import sys
 
 import xbmcaddon
@@ -11,6 +12,7 @@ from . import (
     detail,
     listing,
     listing_common,
+    listing_prefix,
     listing_recent,
     listing_series,
     texts,
@@ -66,6 +68,7 @@ DIRECTORY_ACTIONS = {
     "kind": listing.kind_menu,
     "letters": listing.letters,
     "titles": listing.titles,
+    "prefix": listing_prefix.prefix_screen,
     "search": listing.search,
     "lists": listing.lists,
     "tmdb_list": listing.tmdb_list,
@@ -73,8 +76,12 @@ DIRECTORY_ACTIONS = {
     "episodes": listing_series.episodes,
     "recent": listing_recent.recently_watched,
 }
-PLAIN_ACTIONS = {"settings": open_settings, "test_connection": test_connection, "remote_setup": remote_setup,
-                 "detail": detail.show}
+PLAIN_ACTIONS = {
+    "settings": open_settings,
+    "test_connection": test_connection,
+    "remote_setup": remote_setup,
+    "detail": detail.show,
+}
 
 
 def show_error(error):

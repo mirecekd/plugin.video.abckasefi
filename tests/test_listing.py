@@ -36,7 +36,8 @@ def test_letters_show_counts_a_to_z_then_digits(ui, cat):
     cat.data["letters"] = [{"letter": "0-9", "n": 5}, {"letter": "B", "n": 12}, {"letter": "A", "n": 3}]
     run("?action=letters&kind=movie")
     assert labels(ui) == ["A (3)", "B (12)", "0-9 (5)"]
-    assert ui.entries()[0][0] == BASE + "?action=titles&kind=movie&letter=A&page=1"
+    assert ui.entries()[0][0] == BASE + "?action=prefix&kind=movie&prefix=a"
+    assert ui.entries()[2][0] == BASE + "?action=prefix&kind=movie&prefix=&digits=1"
     assert cat.calls == [("letters", "movie")]
 
 

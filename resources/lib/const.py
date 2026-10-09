@@ -75,3 +75,5 @@ S_RECENT = 30067
 S_INFO = 30068
 S_SORT_VOTES = 30069
 S_SORT_TMDB = 30070
+S_EXACT_FOLDER = 30071  # two placeholders: the prefix in capitals, the number of titles that are exactly it
+S_OTHER_FOLDER = 30072  # one placeholder: the number of titles without any letter or digit in the name

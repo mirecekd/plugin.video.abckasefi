@@ -231,3 +231,11 @@ msgstr "By votes"
 msgctxt "#30070"
 msgid "TMDB order"
 msgstr "TMDB order"
+
+msgctxt "#30071"
+msgid "{} (exact, {})"
+msgstr "{} (exact, {})"
+
+msgctxt "#30072"
+msgid "Other ({})"
+msgstr "Other ({})"

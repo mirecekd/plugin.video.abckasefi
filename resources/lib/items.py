@@ -6,6 +6,7 @@ Rules that make Kodi's own watched feature work (see SPEC.md):
 - IsPlayable=true, isFolder=False;
 - NO setPlaycount on movie/episode tags - the value stored in Kodi's database must win.
 """
+
 import xbmcgui
 
 from . import urls
@@ -35,6 +36,12 @@ def fill_title(tag, data):
         tag.setIMDBNumber(data["id"])
 
 
+def set_plot(tag, data):
+    """Plot from the list answer's `overview`, only when there is one (the catalog fills it from its cache)."""
+    if data.get("overview"):
+        tag.setPlot(data["overview"])
+
+
 def label_of(data):
     title = data.get("title") or data.get("id") or "?"
     return f"{title} ({data['year']})" if data.get("year") else title
@@ -50,6 +57,7 @@ def movie_item(data, catalog):
     """(path, ListItem, isFolder) for a playable movie."""
     item = xbmcgui.ListItem(label=label_of(data), offscreen=True)
     fill_title(_tag(item, MOVIE), data)
+    set_plot(item.getVideoInfoTag(), data)
     _art(item, catalog, data["id"])
     item.setProperty("IsPlayable", "true")
     add_info_menu(item, data["id"])
@@ -62,6 +70,7 @@ def series_item(data, catalog, watched=None):
     tag = _tag(item, "tvshow")
     fill_title(tag, data)
     tag.setTvShowTitle(data.get("title") or "")
+    set_plot(tag, data)
     _art(item, catalog, data["id"])
     apply_progress(item, tag, watched)
     add_info_menu(item, data["id"])

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!-- plugin.video.abckasefi/addon.xml -->
-<addon id="plugin.video.abckasefi" name="ABCKASEFI" version="0.3.0" provider-name="mirecekd">
+<addon id="plugin.video.abckasefi" name="ABCKASEFI" version="0.4.0" provider-name="mirecekd">
   <requires>
     <import addon="xbmc.python" version="3.0.1"/>
     <import addon="script.module.certifi" optional="true"/>
@@ -25,7 +25,8 @@
       <icon>icon.png</icon>
       <fanart>fanart.png</fanart>
     </assets>
-    <news>0.3.0 - Sorting: best rated (weighted, so a few votes cannot outrank a classic), most votes, year and name in letter lists, and the same choices in TMDB lists.
+    <news>0.4.0 - Big letters split into prefix folders (A, then AR, then ARM, ...) until a folder fits one page; plot summaries are shown in lists.
+0.3.0 - Sorting: best rated (weighted, so a few votes cannot outrank a classic), most votes, year and name in letter lists, and the same choices in TMDB lists.
 0.2.0 - Information dialog with plot, cast, director and writers (context menu), Recently watched in the main menu, phone setup now saves the settings reliably.
 0.1.0 - First release: Movies and Series by letter A-Z, TMDB lists, search, paging, CZ/SK/EN titles, watched via Kodi, QR setup from a phone.</news>
   </extension>
