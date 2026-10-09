@@ -8,3 +8,4 @@ site/
 .ruff_cache/
 typings/
 SPEC.md
+design/preview/

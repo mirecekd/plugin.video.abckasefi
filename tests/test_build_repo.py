@@ -11,8 +11,8 @@ import pytest
 from defusedxml import ElementTree
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
-import build_repo  # noqa: E402
-import repo_zip  # noqa: E402
+import build_repo
+import repo_zip
 
 BASE = "https://example.github.io/plugin.video.abckasefi"
 PLUGIN = "plugin.video.abckasefi"
