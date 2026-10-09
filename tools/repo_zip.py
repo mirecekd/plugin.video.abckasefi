@@ -11,7 +11,7 @@ from defusedxml import ElementTree
 PLUGIN_ID = "plugin.video.abckasefi"
 REPO_ID = "repository.abckasefi"
 EXCLUDE_DIRS = {".git", ".github", ".venv", "__pycache__", ".pytest_cache", ".ruff_cache", "tools", "tests", "site",
-                "typings", REPO_ID}
+                "typings", "design", REPO_ID}
 EXCLUDE_FILES = {".gitignore", "pyproject.toml", "pyrightconfig.json", "SPEC.md", ".DS_Store"}
 EXCLUDE_SUFFIXES = (".pyc", ".zip")
 FIXED_TIME = (2026, 1, 1, 0, 0, 0)  # reproducible zips: same input, same bytes, same sha256

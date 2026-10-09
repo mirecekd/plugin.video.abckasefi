@@ -55,7 +55,8 @@ def test_plugin_zip_has_the_addon_folder_at_its_root_and_nothing_private(site):
     for required in ("addon.xml", "default.py", "icon.png", "fanart.png", "resources/lib/router.py",
                      "resources/settings.xml", "resources/lib/totals.py", "LICENSE"):
         assert f"{PLUGIN}/{required}" in names, required
-    banned = ("/.git", ".venv", "__pycache__", "/tests/", "/tools/", "SPEC.md", ".pyc", "repository.abckasefi", ".github")
+    banned = ("/.git", ".venv", "__pycache__", "/tests/", "/tools/", "/design/", "SPEC.md", ".pyc", "repository.abckasefi",
+              ".github")
     assert not [n for n in names if any(b in n for b in banned)]
 
 
