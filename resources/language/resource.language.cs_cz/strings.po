@@ -239,3 +239,23 @@ msgstr "{} (přesně, {})"
 msgctxt "#30072"
 msgid "Other ({})"
 msgstr "Ostatní ({})"
+
+msgctxt "#30073"
+msgid "Continue: {} (in progress, {})"
+msgstr "Pokračovat: {} (rozkoukáno, {})"
+
+msgctxt "#30074"
+msgid "Next episode: {}"
+msgstr "Další díl: {}"
+
+msgctxt "#30075"
+msgid "All seasons"
+msgstr "Všechny řady"
+
+msgctxt "#30076"
+msgid "<1 min"
+msgstr "<1 min"
+
+msgctxt "#30077"
+msgid "{} min"
+msgstr "{} min"

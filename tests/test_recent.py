@@ -1,38 +1,12 @@
 # tests/test_recent.py
 """Recently watched: rows read from a real (temporary) MyVideos-like sqlite file, parsed and listed newest first."""
-import sqlite3
 
 import pytest
 
 from resources.lib import api, recent
 from resources.lib.const import NOKTURNO_BASE
 from tests.listing_support import BASE, labels, run
-
-MOVIE = NOKTURNO_BASE + "?action=play&type=movie&id=tt0000001&ask=1"
-OTHER = NOKTURNO_BASE + "?action=play&type=movie&id=tt0000002&ask=1"
-EP = NOKTURNO_BASE + "?action=play&type=series&id=tt0000009%3A{}%3A{}&series=tt0000009&ask=1"
-
-
-def make_db(tmp_path, rows, bookmarks=()):
-    """rows: (strFilename, lastPlayed, strPath); bookmarks: strFilename that have a resume point."""
-    path = str(tmp_path / "MyVideos999.db")
-    conn = sqlite3.connect(path)
-    conn.executescript(
-        "CREATE TABLE path(idPath INTEGER PRIMARY KEY, strPath TEXT);"
-        "CREATE TABLE files(idFile INTEGER PRIMARY KEY, idPath INTEGER, strFilename TEXT, playCount INTEGER, "
-        "lastPlayed TEXT);"
-        "CREATE TABLE bookmark(idBookmark INTEGER PRIMARY KEY, idFile INTEGER, type INTEGER);")
-    paths = {}
-    for number, (name, played, folder) in enumerate(rows, 1):
-        if folder not in paths:
-            paths[folder] = len(paths) + 1
-            conn.execute("INSERT INTO path VALUES (?, ?)", (paths[folder], folder))
-        conn.execute("INSERT INTO files VALUES (?, ?, ?, 1, ?)", (number, paths[folder], name, played))
-        if name in bookmarks:
-            conn.execute("INSERT INTO bookmark VALUES (?, ?, 1)", (number, number))
-    conn.commit()
-    conn.close()
-    return path
+from tests.recent_support import EP, MOVIE, OTHER, make_db
 
 
 def test_parse_movie_and_episode_urls():
@@ -43,25 +17,36 @@ def test_parse_movie_and_episode_urls():
 
 
 def test_newest_first_one_entry_per_series(tmp_path):
-    path = make_db(tmp_path, [
-        (MOVIE, "2026-01-01 10:00:00", NOKTURNO_BASE),
-        (EP.format(1, 1), "2026-02-01 10:00:00", NOKTURNO_BASE),
-        (EP.format(1, 2), "2026-03-01 10:00:00", NOKTURNO_BASE),  # the later episode of the same show wins
-        (OTHER, "2026-02-15 10:00:00", NOKTURNO_BASE)])
+    path = make_db(
+        tmp_path,
+        [
+            (MOVIE, "2026-01-01 10:00:00", NOKTURNO_BASE),
+            (EP.format(1, 1), "2026-02-01 10:00:00", NOKTURNO_BASE),
+            (EP.format(1, 2), "2026-03-01 10:00:00", NOKTURNO_BASE),  # the later episode of the same show wins
+            (OTHER, "2026-02-15 10:00:00", NOKTURNO_BASE),
+        ],
+    )
     assert recent.recent(path) == [("episode", "tt0000009", 1, 2), ("movie", "tt0000002"), ("movie", "tt0000001")]
 
 
 def test_resume_point_without_last_played_counts_and_foreign_rows_do_not(tmp_path):
-    path = make_db(tmp_path, [
-        (MOVIE, "", NOKTURNO_BASE),  # stopped half way: only a bookmark
-        (OTHER, "", NOKTURNO_BASE),  # never played, no bookmark: not recent
-        ("/movies/x.mkv", "2026-05-01 10:00:00", "/movies/")], bookmarks=(MOVIE,))
+    path = make_db(
+        tmp_path,
+        [
+            (MOVIE, "", NOKTURNO_BASE),  # stopped half way: only a bookmark
+            (OTHER, "", NOKTURNO_BASE),  # never played, no bookmark: not recent
+            ("/movies/x.mkv", "2026-05-01 10:00:00", "/movies/"),
+        ],
+        bookmarks=(MOVIE,),
+    )
     assert recent.recent(path) == [("movie", "tt0000001")]
 
 
 def test_limit_and_unreadable_database(tmp_path):
-    rows = [(NOKTURNO_BASE + f"?action=play&type=movie&id=tt{n:07d}&ask=1", f"2026-01-{n:02d} 10:00:00", NOKTURNO_BASE)
-            for n in range(1, 11)]
+    rows = [
+        (NOKTURNO_BASE + f"?action=play&type=movie&id=tt{n:07d}&ask=1", f"2026-01-{n:02d} 10:00:00", NOKTURNO_BASE)
+        for n in range(1, 11)
+    ]
     assert len(recent.recent(make_db(tmp_path, rows), limit=4)) == 4
     bad = tmp_path / "broken.db"
     bad.write_text("not a database")
@@ -77,14 +62,14 @@ def stored(monkeypatch):
     return put
 
 
-def test_recent_screen_lists_movie_and_episode_entries(ui, cat, stored):
+def test_recent_screen_lists_movie_and_series_folder_entries(ui, cat, stored):
     stored([("episode", "tt0000009", 2, 3), ("movie", "tt0000001")])
     cat.data["title"] = {"title": "Name", "year": 1999, "type": "movie"}
     run("?action=recent")
     entries = ui.entries()
-    assert entries[0][0] == EP.format(2, 3) and entries[0][2] is False
+    assert entries[0][0] == BASE + "?action=resume&id=tt0000009" and entries[0][2] is True
     assert entries[1][0] == MOVIE and entries[1][2] is False
-    assert labels(ui) == ["Name S02E03", "Name (1999)"]
+    assert labels(ui) == ["Name (S02E03)", "Name (1999)"]
     assert ui.content == ["videos"]
 
 

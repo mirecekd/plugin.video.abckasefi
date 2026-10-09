@@ -239,3 +239,23 @@ msgstr "{} (exact, {})"
 msgctxt "#30072"
 msgid "Other ({})"
 msgstr "Other ({})"
+
+msgctxt "#30073"
+msgid "Continue: {} (in progress, {})"
+msgstr "Continue: {} (in progress, {})"
+
+msgctxt "#30074"
+msgid "Next episode: {}"
+msgstr "Next episode: {}"
+
+msgctxt "#30075"
+msgid "All seasons"
+msgstr "All seasons"
+
+msgctxt "#30076"
+msgid "<1 min"
+msgstr "<1 min"
+
+msgctxt "#30077"
+msgid "{} min"
+msgstr "{} min"

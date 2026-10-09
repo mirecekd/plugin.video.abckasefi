@@ -1,5 +1,6 @@
 # resources/lib/listing_recent.py
-"""Recently watched screen: movies and the last episode per series, taken from Kodi's own database."""
+"""Recently watched screen: movies, and one folder per series (to its resume screen), from Kodi's own database."""
+
 from concurrent.futures import ThreadPoolExecutor
 
 import xbmcgui
@@ -23,19 +24,17 @@ def _title(catalog, tt):
         return {}
 
 
-def _episode_entry(tt, season, number, data, catalog):
+def _series_entry(tt, season, number, data, catalog):
+    """A folder to the resume screen of the series, labelled with the episode that was played last."""
     title = data.get("title") or tt
-    item = xbmcgui.ListItem(label=f"{title} S{season:02d}E{number:02d}", offscreen=True)
+    item = xbmcgui.ListItem(label=f"{title} (S{season:02d}E{number:02d})", offscreen=True)
     tag = item.getVideoInfoTag()
-    tag.setMediaType("episode")
+    tag.setMediaType("tvshow")
     tag.setTvShowTitle(title)
-    tag.setSeason(season)
-    tag.setEpisode(number)
     url = catalog.poster_url(tt)
     if url:
         item.setArt({"poster": url, "thumb": url, "icon": url})
-    item.setProperty("IsPlayable", "true")
-    return urls.nokturno_episode_url(tt, season, number), item, False
+    return urls.build_url(action="resume", id=tt), item, True
 
 
 def recently_watched(handle, params):
@@ -48,7 +47,7 @@ def recently_watched(handle, params):
         if entry[0] == "movie":
             entries.append(items.movie_item(dict(data, id=entry[1]), catalog))
         else:
-            entries.append(_episode_entry(entry[1], entry[2], entry[3], data, catalog))
+            entries.append(_series_entry(entry[1], entry[2], entry[3], data, catalog))
     if not entries:
         common.notify(texts.t(S_NO_RESULTS))
     common.show(handle, entries, "videos")

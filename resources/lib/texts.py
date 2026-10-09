@@ -43,6 +43,11 @@ FALLBACK = {
     const.S_SORT_TMDB: "TMDB order",
     const.S_EXACT_FOLDER: "{} (exact, {})",
     const.S_OTHER_FOLDER: "Other ({})",
+    const.S_RESUME_CONTINUE: "Continue: {} (in progress, {})",
+    const.S_RESUME_NEXT: "Next episode: {}",
+    const.S_ALL_SEASONS: "All seasons",
+    const.S_LESS_THAN_MINUTE: "<1 min",
+    const.S_MINUTES: "{} min",
 }
 
 

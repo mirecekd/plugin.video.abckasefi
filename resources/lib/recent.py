@@ -3,10 +3,13 @@
 
 A title counts as recent when Kodi stored a last-played time or a resume point for its Nokturno URL. Movies are listed
 as such; for series only the newest episode is kept, so the list answers "where was I" instead of repeating a show.
+Every row also carries the playback state of that file (play count, resume point).
 Everything degrades to an empty list when the database cannot be read.
 """
+
 import re
 import sqlite3
+from typing import NamedTuple
 
 from . import watched
 from .const import NOKTURNO_BASE
@@ -17,21 +20,40 @@ MOVIE_RE = re.compile(r"[?&]id=(tt\d+)(?:&|$)")
 PLAY_RE = re.compile(r"[?&]action=play(?:&|$)")
 
 
-def _rows(path):
+class State(NamedTuple):
+    """Playback state of one file; the resume and total seconds are 0 when Kodi stored no resume point."""
+
+    last_played: str
+    play_count: int
+    resume_seconds: float
+    total_seconds: float
+
+
+def _rows(path, tt=None):
+    """[(strFilename, State)], newest last-played first (files with only a resume point come after, newest row first)."""
     try:
         conn = sqlite3.connect(f"file:{path}?mode=ro", uri=True, timeout=2)
     except sqlite3.Error as exc:
         log(f"recent: cannot open the video database ({type(exc).__name__})")
         return []
+    needle = "" if tt is None else f"id={tt}%3A"  # empty = no series filter
     try:
         # a title is recent when Kodi stored a last-played time or a resume bookmark (type 1) for its Nokturno URL
         cur = conn.execute(
-            "SELECT f.strFilename, COALESCE(f.lastPlayed, '') FROM files f JOIN path p ON p.idPath = f.idPath "
+            "SELECT f.strFilename, COALESCE(f.lastPlayed, ''), COALESCE(f.playCount, 0), "
+            "COALESCE(b.timeInSeconds, 0), COALESCE(b.totalTimeInSeconds, 0) "
+            "FROM files f JOIN path p ON p.idPath = f.idPath "
             "LEFT JOIN bookmark b ON b.idFile = f.idFile AND b.type = 1 "
             "WHERE p.strPath = ? AND (COALESCE(f.lastPlayed, '') <> '' OR b.idBookmark IS NOT NULL) "
-            "ORDER BY COALESCE(f.lastPlayed, '') DESC LIMIT 400", (NOKTURNO_BASE,))
-        return cur.fetchall()
-    except sqlite3.Error as exc:
+            "AND (? = '' OR instr(f.strFilename, ?) > 0) "
+            "ORDER BY COALESCE(f.lastPlayed, '') DESC, f.idFile DESC LIMIT 400",
+            (NOKTURNO_BASE, needle, needle),
+        )
+        return [
+            (name, State(played, int(count), float(resume), float(total)))
+            for name, played, count, resume, total in cur.fetchall()
+        ]
+    except (sqlite3.Error, TypeError, ValueError) as exc:
         log(f"recent: query failed ({type(exc).__name__})")
         return []
     finally:
@@ -49,16 +71,34 @@ def parse(filename):
     return ("movie", movie.group(1)) if movie and "type=movie" in filename else None
 
 
-def recent(path=None, limit=MAX_ITEMS):
-    """Newest first: [('movie', tt) | ('episode', tt, season, episode)], one entry per movie and per series."""
+def recent_with_state(path=None, limit=MAX_ITEMS):
+    """Newest first: [(entry, State)], entry = ('movie', tt) | ('episode', tt, season, episode); one per movie and series.
+
+    The episode kept for a series is the one played last (newest last-played stamp), not the highest episode number.
+    """
     path = path or watched.db_path()
     out, seen = [], set()
-    for filename, _played in _rows(path) if path else []:
+    for filename, state in _rows(path) if path else []:
         entry = parse(filename)
         if entry is None or entry[1] in seen:
             continue
         seen.add(entry[1])
-        out.append(entry)
+        out.append((entry, state))
         if len(out) >= limit:
             break
     return out
+
+
+def recent(path=None, limit=MAX_ITEMS):
+    """Newest first: [('movie', tt) | ('episode', tt, season, episode)], one entry per movie and per series."""
+    return [entry for entry, _state in recent_with_state(path, limit)]
+
+
+def last_episode(tt, path=None):
+    """(season, episode, State) of the episode of series `tt` that was played last, or None when none is stored."""
+    path = path or watched.db_path()
+    for filename, state in _rows(path, tt) if path else []:
+        entry = parse(filename)
+        if entry is not None and entry[0] == "episode" and entry[1] == tt:
+            return entry[2], entry[3], state
+    return None

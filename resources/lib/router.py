@@ -14,6 +14,7 @@ from . import (
     listing_common,
     listing_prefix,
     listing_recent,
+    listing_resume,
     listing_series,
     texts,
     urls,
@@ -75,6 +76,7 @@ DIRECTORY_ACTIONS = {
     "seasons": listing_series.seasons,
     "episodes": listing_series.episodes,
     "recent": listing_recent.recently_watched,
+    "resume": listing_resume.resume_screen,
 }
 PLAIN_ACTIONS = {
     "settings": open_settings,
