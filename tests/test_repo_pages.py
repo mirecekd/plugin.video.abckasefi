@@ -57,6 +57,7 @@ def test_pages_follow_the_nokturno_style(site):
     text = (site / "index.html").read_text(encoding="utf-8")
     assert text.startswith('<!doctype html><meta charset="utf-8"><title>ABCKASEFI Kodi repository</title>')
     assert "<script" not in text
+    assert "<h1" not in text  # only the file list, no heading
     assert _hrefs(site / "index.html") == ["addons.xml", "addons.xml.sha256", f"{PLUGIN}/", f"{REPO}/"]
 
 

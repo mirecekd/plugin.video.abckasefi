@@ -15,7 +15,7 @@ def index_html(title, links):
         f'<li><a href="{html.escape(href, quote=True)}">{html.escape(text)}</a></li>' for href, text in links
     )
     safe_title = html.escape(title)
-    return f'<!doctype html><meta charset="utf-8"><title>{safe_title}</title>\n<h1>{safe_title}</h1>\n<ul>\n{items}\n</ul>\n'
+    return f'<!doctype html><meta charset="utf-8"><title>{safe_title}</title>\n<ul>\n{items}\n</ul>\n'
 
 
 def _with_hash(name):
