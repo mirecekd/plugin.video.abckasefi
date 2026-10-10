@@ -1,5 +1,6 @@
 # resources/lib/listing_common.py
 """Helpers shared by the listing screens: parameter checks, chunked directory output, item routing by type."""
+
 import re
 
 import xbmcgui
@@ -93,10 +94,16 @@ def close_failed(handle):
     xbmcplugin.endOfDirectory(handle, succeeded=False)
 
 
-def show(handle, entries, content, update=False):
-    """Hand the entries to Kodi in chunks of CHUNK and close the directory (never cached: watched marks change)."""
+def show(handle, entries, content, update=False, label_mask="", label2_mask=""):
+    """Hand the entries to Kodi in chunks of CHUNK and close the directory (never cached: watched marks change).
+
+    `label_mask` (e.g. "%H. %T") is Kodi's label template for the unsorted view; without it Kodi shows the bare title.
+    """
     for start in range(0, len(entries), CHUNK):
-        xbmcplugin.addDirectoryItems(handle, entries[start:start + CHUNK], len(entries))
+        xbmcplugin.addDirectoryItems(handle, entries[start : start + CHUNK], len(entries))
     xbmcplugin.setContent(handle, content)
-    xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
+    if label_mask:
+        xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE, labelMask=label_mask, label2Mask=label2_mask)
+    else:
+        xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
     xbmcplugin.endOfDirectory(handle, succeeded=True, updateListing=update, cacheToDisc=False)

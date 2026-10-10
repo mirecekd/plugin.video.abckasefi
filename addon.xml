@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!-- plugin.video.abckasefi/addon.xml -->
-<addon id="plugin.video.abckasefi" name="ABCKASEFI" version="0.6.1" provider-name="mirecekd">
+<addon id="plugin.video.abckasefi" name="ABCKASEFI" version="0.6.2" provider-name="mirecekd">
   <requires>
     <import addon="xbmc.python" version="3.0.1"/>
     <import addon="script.module.certifi" optional="true"/>
@@ -25,7 +25,8 @@
       <icon>icon.png</icon>
       <fanart>fanart.png</fanart>
     </assets>
-    <news>0.6.1 - New icon and background in the Copper colours of www.mirecek.org; the icon is a full square like the other add-ons.
+    <news>0.6.2 - Episode lists show the episode number before the title (18. Title).
+0.6.1 - New icon and background in the Copper colours of www.mirecek.org; the icon is a full square like the other add-ons.
 0.6.0 - Recently watched is the first entry in Movies (movies only) and in Series (series only, with Continue and Next episode); the main menu still shows both.
 0.5.0 - Recently watched: a series opens a menu with Continue (where you stopped), Next episode and All seasons.
 0.4.0 - Big letters split into prefix folders (A, then AR, then ARM, ...) until a folder fits one page; plot summaries are shown in lists.

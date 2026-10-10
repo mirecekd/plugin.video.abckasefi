@@ -1,9 +1,12 @@
 # resources/lib/listing_series.py
 """Series drill-down screens: seasons of a series and episodes of a season, with Kodi's watched state."""
+
 from . import api, items, texts, totals, watched
 from . import listing_common as common
 from .const import S_NO_EPISODES, S_NO_RESULTS, S_SEASON_N, S_SPECIALS
 from .urls import check_tt
+
+EPISODE_LABEL_MASK = "%H. %T"  # Kodi masks: %H episode number, %T title -> "18. Name"
 
 
 def season_label(season, name):
@@ -40,7 +43,8 @@ def episodes(handle, params):
     series_title = (catalog.title(tt) or {}).get("title", "")
     entries = [
         items.episode_item(tt, season, entry, series_title, catalog)
-        for entry in sorted(data.get("episodes") or [], key=lambda e: int(e["episode"]))]
+        for entry in sorted(data.get("episodes") or [], key=lambda e: int(e["episode"]))
+    ]
     if not entries:
         common.notify(texts.t(S_NO_EPISODES))
-    common.show(handle, entries, "episodes")
+    common.show(handle, entries, "episodes", label_mask=EPISODE_LABEL_MASK)

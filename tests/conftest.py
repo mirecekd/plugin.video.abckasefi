@@ -1,5 +1,6 @@
 # tests/conftest.py
 """Shared fixtures. `ui` records the Kodi calls the listing screens make (xbmcplugin functions and xbmcgui.Dialog)."""
+
 import types
 
 import pytest
@@ -63,9 +64,18 @@ def cat(monkeypatch):
 
 @pytest.fixture
 def ui(monkeypatch):
-    """Recorder: ui.added (addDirectoryItems batches), ui.ended, ui.content, ui.sorts, ui.dialogs, ui.entries()."""
+    """Recorder: ui.added (addDirectoryItems batches), ui.ended, ui.content, ui.sorts, ui.sort_masks, ui.dialogs, ui.entries()."""
     rec = types.SimpleNamespace(
-        added=[], ended=[], content=[], sorts=[], dialogs=[], settings_opened=0, input_answer="", yesno_answer=False)
+        added=[],
+        ended=[],
+        content=[],
+        sorts=[],
+        sort_masks=[],
+        dialogs=[],
+        settings_opened=0,
+        input_answer="",
+        yesno_answer=False,
+    )
 
     class FakeDialog:
         def notification(self, heading, message, icon="", time=0, sound=True):
@@ -100,10 +110,14 @@ def ui(monkeypatch):
     def end(handle, succeeded=True, updateListing=False, cacheToDisc=True):
         rec.ended.append({"handle": handle, "succeeded": succeeded, "update": updateListing, "cache": cacheToDisc})
 
+    def add_sort(handle, method, *args, **kwargs):
+        rec.sorts.append(method)
+        rec.sort_masks.append(dict(kwargs))  # masks passed by name; {} means Kodi's default label
+
     monkeypatch.setattr(xbmcplugin, "addDirectoryItems", add)
     monkeypatch.setattr(xbmcplugin, "endOfDirectory", end)
     monkeypatch.setattr(xbmcplugin, "setContent", lambda handle, content: rec.content.append(content))
-    monkeypatch.setattr(xbmcplugin, "addSortMethod", lambda handle, method, *a, **k: rec.sorts.append(method))
+    monkeypatch.setattr(xbmcplugin, "addSortMethod", add_sort)
     monkeypatch.setattr(xbmcgui, "Dialog", FakeDialog)
     monkeypatch.setattr(xbmcgui, "ListItem", FakeListItem)
     monkeypatch.setattr(xbmcaddon, "Addon", FakeAddon)
