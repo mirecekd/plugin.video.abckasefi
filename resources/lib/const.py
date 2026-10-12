@@ -10,6 +10,9 @@ KINDS = ("movie", "series")
 LANGS = ("cs", "sk", "en")  # index in the `lang` setting
 SORTS = ("name", "rating", "votes", "year")  # letter listings
 LIST_SORTS = ("tmdb", "rating", "votes", "year", "name")
+FLAT_SORTS = ("rating", "votes", "year", "name")  # filter results (best rated, genre, CZ/SK) open on the first one
+ORIGIN_CZSK = "czsk"  # catalog filter: Czech, Slovak and Czechoslovak productions
+NOISE_GENRES = ("Game-Show", "News", "Reality-TV", "Short", "Talk-Show")  # IMDb genres the genre menus hide
 
 PER_PAGE_MIN = 20
 PER_PAGE_MAX = 200
@@ -82,3 +85,56 @@ S_RESUME_NEXT = 30074  # one placeholder: the episode code of the next episode
 S_ALL_SEASONS = 30075
 S_LESS_THAN_MINUTE = 30076
 S_MINUTES = 30077  # one placeholder: whole minutes
+S_BEST_RATED = 30078
+S_GENRES = 30079
+S_CZSK = 30080
+S_MOST_VOTES = 30081
+S_NEWEST = 30082
+S_GENRE_ACTION = 30100
+S_GENRE_ADVENTURE = 30101
+S_GENRE_ANIMATION = 30102
+S_GENRE_BIOGRAPHY = 30103
+S_GENRE_COMEDY = 30104
+S_GENRE_CRIME = 30105
+S_GENRE_DOCUMENTARY = 30106
+S_GENRE_DRAMA = 30107
+S_GENRE_FAMILY = 30108
+S_GENRE_FANTASY = 30109
+S_GENRE_FILM_NOIR = 30110
+S_GENRE_HISTORY = 30111
+S_GENRE_HORROR = 30112
+S_GENRE_MUSIC = 30113
+S_GENRE_MUSICAL = 30114
+S_GENRE_MYSTERY = 30115
+S_GENRE_ROMANCE = 30116
+S_GENRE_SCI_FI = 30117
+S_GENRE_SPORT = 30118
+S_GENRE_THRILLER = 30119
+S_GENRE_WAR = 30120
+S_GENRE_WESTERN = 30121
+
+# IMDb genre name -> string id of its label; a genre missing here is shown under its IMDb name
+GENRE_STRINGS = {
+    "Action": S_GENRE_ACTION,
+    "Adventure": S_GENRE_ADVENTURE,
+    "Animation": S_GENRE_ANIMATION,
+    "Biography": S_GENRE_BIOGRAPHY,
+    "Comedy": S_GENRE_COMEDY,
+    "Crime": S_GENRE_CRIME,
+    "Documentary": S_GENRE_DOCUMENTARY,
+    "Drama": S_GENRE_DRAMA,
+    "Family": S_GENRE_FAMILY,
+    "Fantasy": S_GENRE_FANTASY,
+    "Film-Noir": S_GENRE_FILM_NOIR,
+    "History": S_GENRE_HISTORY,
+    "Horror": S_GENRE_HORROR,
+    "Music": S_GENRE_MUSIC,
+    "Musical": S_GENRE_MUSICAL,
+    "Mystery": S_GENRE_MYSTERY,
+    "Romance": S_GENRE_ROMANCE,
+    "Sci-Fi": S_GENRE_SCI_FI,
+    "Sport": S_GENRE_SPORT,
+    "Thriller": S_GENRE_THRILLER,
+    "War": S_GENRE_WAR,
+    "Western": S_GENRE_WESTERN,
+}

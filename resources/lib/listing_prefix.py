@@ -43,10 +43,10 @@ def _children(data, parent, digits_only):
     return found
 
 
-def _descend(catalog, kind, prefix, limit, digits):
+def _descend(catalog, kind, prefix, limit, digits, scope):
     """Follow levels that offer a single choice; returns (prefix, exact, children, list_titles)."""
     while True:
-        data = catalog.prefixes(kind, prefix) or {}
+        data = catalog.prefixes(kind, prefix, scope.get("genre"), "origin" in scope) or {}
         digit_level = digits and not prefix
         children = _children(data, prefix, digit_level)
         exact = _count(data.get("exact")) if (prefix or digit_level) else 0
@@ -58,24 +58,26 @@ def _descend(catalog, kind, prefix, limit, digits):
         return prefix, exact, children, False
 
 
-def _titles_page(handle, catalog, kind, prefix, exact, sort, page, action):
-    data = catalog.titles(kind, None, sort, page, cfg.per_page(), prefix, exact)
-    scope = {"action": action, "kind": kind, "prefix": prefix}
+def _titles_page(handle, catalog, kind, prefix, exact, sort, page, action, scope):
+    """`scope` = the genre/origin filters (common.scope_of); they ride along in every URL this page builds."""
+    data = catalog.titles(kind, None, sort, page, cfg.per_page(), prefix, exact, scope.get("genre"), "origin" in scope)
+    where = {"action": action, "kind": kind, "prefix": prefix}
     if exact:
-        scope["exact"] = 1
-    head = [sort_switch(sort, SORTS, **scope)] if page == 1 else []
-    finish_page(handle, catalog, data, kind, page, dict(scope, sort=sort), head)
+        where["exact"] = 1
+    where.update(scope)
+    head = [sort_switch(sort, SORTS, **where)] if page == 1 else []
+    finish_page(handle, catalog, data, kind, page, dict(where, sort=sort), head)
 
 
-def _folders(handle, kind, prefix, exact, children):
+def _folders(handle, kind, prefix, exact, children, scope):
     entries = []
     if exact and prefix:
         label = texts.tf(S_EXACT_FOLDER, prefix.upper(), exact)
-        entries.append(folder(label, action="titles", kind=kind, prefix=prefix, exact=1, page=1))
-    elif exact:  # titles without any latin letter or digit; only the old digit bucket lists them
+        entries.append(folder(label, action="titles", kind=kind, prefix=prefix, exact=1, page=1, **scope))
+    elif exact and not scope:  # titles without any latin letter or digit; only the old digit bucket lists them
         entries.append(folder(texts.tf(S_OTHER_FOLDER, exact), action="titles", kind=kind, letter="0-9", page=1))
     for child, count in children:
-        entries.append(folder(f"{child.upper()} ({count})", action="prefix", kind=kind, prefix=child))
+        entries.append(folder(f"{child.upper()} ({count})", action="prefix", kind=kind, prefix=child, **scope))
     if not entries:
         common.notify(texts.t(S_NO_RESULTS))
     show_folders(handle, entries)
@@ -88,12 +90,13 @@ def prefix_screen(handle, params):
     sort = common.pick(params.get("sort"), SORTS, SORTS[0])
     page = common.page_number(params.get("page"))
     digits = params.get("digits") == "1"
+    scope = common.scope_of(params)
     catalog = api.Catalog()
-    prefix, exact, children, list_titles = _descend(catalog, kind, prefix, cfg.per_page(), digits)
+    prefix, exact, children, list_titles = _descend(catalog, kind, prefix, cfg.per_page(), digits, scope)
     if list_titles:
-        _titles_page(handle, catalog, kind, prefix, False, sort, page, "prefix")
+        _titles_page(handle, catalog, kind, prefix, False, sort, page, "prefix", scope)
     else:
-        _folders(handle, kind, prefix, exact, children)
+        _folders(handle, kind, prefix, exact, children, scope)
 
 
 def titles_screen(handle, params):
@@ -105,4 +108,4 @@ def titles_screen(handle, params):
     sort = common.pick(params.get("sort"), SORTS, SORTS[0])
     page = common.page_number(params.get("page"))
     catalog = api.Catalog()
-    _titles_page(handle, catalog, kind, prefix, params.get("exact") == "1", sort, page, "titles")
+    _titles_page(handle, catalog, kind, prefix, params.get("exact") == "1", sort, page, "titles", common.scope_of(params))

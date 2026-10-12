@@ -38,6 +38,9 @@ def test_kind_menu_starts_with_recent(ui, cat, kind):
     paths = [p for p, _i, _f in ui.entries()]
     assert paths[0] == BASE + f"?action=recent&kind={kind}"
     assert paths[1:] == [
+        BASE + f"?action=flat&kind={kind}&page=1",
+        BASE + f"?action=genres&kind={kind}",
+        BASE + f"?action=czsk&kind={kind}",
         BASE + f"?action=letters&kind={kind}",
         BASE + f"?action=lists&kind={kind}",
         BASE + f"?action=search&kind={kind}",

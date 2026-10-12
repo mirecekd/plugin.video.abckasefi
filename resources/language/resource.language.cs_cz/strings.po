@@ -259,3 +259,111 @@ msgstr "<1 min"
 msgctxt "#30077"
 msgid "{} min"
 msgstr "{} min"
+
+msgctxt "#30078"
+msgid "Best rated"
+msgstr "Nejlépe hodnocené"
+
+msgctxt "#30079"
+msgid "Genres"
+msgstr "Žánry"
+
+msgctxt "#30080"
+msgid "Czech and Slovak"
+msgstr "České a slovenské"
+
+msgctxt "#30081"
+msgid "Most votes"
+msgstr "Nejvíce hlasů"
+
+msgctxt "#30082"
+msgid "Newest"
+msgstr "Nejnovější"
+
+msgctxt "#30100"
+msgid "Action"
+msgstr "Akční"
+
+msgctxt "#30101"
+msgid "Adventure"
+msgstr "Dobrodružný"
+
+msgctxt "#30102"
+msgid "Animation"
+msgstr "Animovaný"
+
+msgctxt "#30103"
+msgid "Biography"
+msgstr "Životopisný"
+
+msgctxt "#30104"
+msgid "Comedy"
+msgstr "Komedie"
+
+msgctxt "#30105"
+msgid "Crime"
+msgstr "Krimi"
+
+msgctxt "#30106"
+msgid "Documentary"
+msgstr "Dokumentární"
+
+msgctxt "#30107"
+msgid "Drama"
+msgstr "Drama"
+
+msgctxt "#30108"
+msgid "Family"
+msgstr "Rodinný"
+
+msgctxt "#30109"
+msgid "Fantasy"
+msgstr "Fantasy"
+
+msgctxt "#30110"
+msgid "Film-Noir"
+msgstr "Film-noir"
+
+msgctxt "#30111"
+msgid "History"
+msgstr "Historický"
+
+msgctxt "#30112"
+msgid "Horror"
+msgstr "Horor"
+
+msgctxt "#30113"
+msgid "Music"
+msgstr "Hudební"
+
+msgctxt "#30114"
+msgid "Musical"
+msgstr "Muzikál"
+
+msgctxt "#30115"
+msgid "Mystery"
+msgstr "Mysteriózní"
+
+msgctxt "#30116"
+msgid "Romance"
+msgstr "Romantický"
+
+msgctxt "#30117"
+msgid "Sci-Fi"
+msgstr "Sci-Fi"
+
+msgctxt "#30118"
+msgid "Sport"
+msgstr "Sportovní"
+
+msgctxt "#30119"
+msgid "Thriller"
+msgstr "Thriller"
+
+msgctxt "#30120"
+msgid "War"
+msgstr "Válečný"
+
+msgctxt "#30121"
+msgid "Western"
+msgstr "Western"

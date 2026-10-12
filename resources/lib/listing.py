@@ -7,6 +7,9 @@ from . import api, cfg, listing_prefix, texts
 from . import listing_common as common
 from .const import (
     LIST_SORTS,
+    S_BEST_RATED,
+    S_CZSK,
+    S_GENRES,
     S_MOVIES,
     S_NO_RESULTS,
     S_RECENT,
@@ -42,6 +45,9 @@ def kind_menu(handle, params):
         handle,
         [
             folder(texts.t(S_RECENT), action="recent", kind=kind),
+            folder(texts.t(S_BEST_RATED), action="flat", kind=kind, page=1),
+            folder(texts.t(S_GENRES), action="genres", kind=kind),
+            folder(texts.t(S_CZSK), action="czsk", kind=kind),
             folder("A-Z", action="letters", kind=kind),
             folder(texts.t(S_TMDB_LISTS), action="lists", kind=kind),
             folder(texts.t(S_SEARCH), action="search", kind=kind),

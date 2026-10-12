@@ -95,7 +95,7 @@ def test_argv_is_reread_on_every_run(ui, cat):
     run("?action=kind&kind=movie", handle=3)
     run("?action=kind&kind=series", handle=4)
     assert [e["handle"] for e in ui.ended] == [3, 4]
-    assert ui.entries()[0][0].endswith("kind=movie") and ui.entries()[4][0].endswith("kind=series")
+    assert ui.entries()[0][0].endswith("kind=movie") and ui.entries()[7][0].endswith("kind=series")
 
 
 def test_remote_setup_reopens_settings_only_after_a_saved_setup(ui, cat, monkeypatch):

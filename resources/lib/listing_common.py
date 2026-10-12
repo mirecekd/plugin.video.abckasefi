@@ -13,6 +13,7 @@ from .log import log
 CHUNK = 200  # items per xbmcplugin.addDirectoryItems call
 LETTER_RE = re.compile(r"^(?:[A-Z]|0-9)$")
 KEY_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
+GENRE_RE = re.compile(r"^[A-Za-z][A-Za-z-]{0,30}$")
 
 
 def check_kind(value):
@@ -31,6 +32,26 @@ def check_key(value):
     if not KEY_RE.match(value or ""):
         raise ValueError(f"bad list key: {value!r}")
     return value
+
+
+def check_genre(value):
+    """An IMDb genre name (Sci-Fi, Film-Noir, ...) or None when there is none."""
+    if not value:
+        return None
+    if not GENRE_RE.match(value):
+        raise ValueError(f"bad genre: {value!r}")
+    return value
+
+
+def scope_of(params):
+    """The catalog filters of a screen as URL parameters: {'genre': 'Crime', 'origin': 1}; only the ones that are set."""
+    scope = {}
+    genre = check_genre(params.get("genre"))
+    if genre:
+        scope["genre"] = genre
+    if params.get("origin") == "1":
+        scope["origin"] = 1
+    return scope
 
 
 def pick(value, allowed, default):

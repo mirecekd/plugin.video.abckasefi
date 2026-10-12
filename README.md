@@ -12,7 +12,7 @@ ABeCedni KAtalog SErialu a FIlmu - a Kodi add-on that browses movies and series 
 
 ## What it is
 
-ABCKASEFI is a video add-on for Kodi 20 and newer. It lists movies and series by letter (A-Z and 0-9), by TMDB lists (top rated, popular, trending) and by search, with Czech, Slovak or English titles. The list data comes from a small catalog service that you run yourself. When you pick a movie or an episode, the add-on passes it to the Nokturno add-on, which does the playback.
+ABCKASEFI is a video add-on for Kodi 20 and newer. It lists movies and series by letter (A-Z and 0-9), as one best-rated list, by genre, as a Czech and Slovak section (best rated, most votes, newest, A-Z, genres), by TMDB lists (top rated, popular, trending) and by search, with Czech, Slovak or English titles. The list data comes from a small catalog service that you run yourself. When you pick a movie or an episode, the add-on passes it to the Nokturno add-on, which does the playback.
 
 The add-on hosts, indexes and distributes no content. It only shows titles from your own catalog service.
 

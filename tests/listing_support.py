@@ -35,13 +35,18 @@ class FakeCatalog:
     def letters(self, *a):
         return self._do("letters", *a)
 
-    def titles(self, kind, letter, sort, page, per_page, prefix=None, exact=False):
-        return self._do("titles", kind, letter, sort, page, per_page, prefix, exact)
+    def titles(self, kind, letter, sort, page, per_page, prefix=None, exact=False, genre=None, origin=False, flat=False):
+        """Filters are recorded only when set, so the older tests keep their eight-field call tuples."""
+        extra = (genre, origin, flat) if (genre or origin or flat) else ()
+        return self._do("titles", kind, letter, sort, page, per_page, prefix, exact, *extra)
 
-    def prefixes(self, kind, prefix):
+    def genres(self, kind, origin=False):
+        return self._do("genres", kind, origin)
+
+    def prefixes(self, kind, prefix, genre=None, origin=False):
         """Answers from data["prefixes"], a dict prefix -> API answer (or one exception for every prefix)."""
         answers = FakeCatalog.data.get("prefixes")
-        FakeCatalog.calls.append(("prefixes", kind, prefix))
+        FakeCatalog.calls.append(("prefixes", kind, prefix) + ((genre, origin) if (genre or origin) else ()))
         if isinstance(answers, Exception):
             raise answers
         return (answers or {}).get(prefix)

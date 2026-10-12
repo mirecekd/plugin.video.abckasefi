@@ -180,3 +180,4 @@ def test_http_to_https_upgrade_is_allowed():
     request = urllib.request.Request("http://catalog.example.org/v1/ping")
     ok = _redirect(request, 301, "https://catalog.example.org/v1/ping")
     assert ok is not None and ok.full_url.startswith("https://")
+

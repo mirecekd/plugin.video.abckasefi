@@ -8,7 +8,7 @@ import urllib.request
 from urllib.parse import quote, urlencode, urlsplit
 
 from . import cfg, tls
-from .const import HTTP_TIMEOUT
+from .const import HTTP_TIMEOUT, ORIGIN_CZSK
 from .log import log
 from .urls import check_tt
 
@@ -34,6 +34,18 @@ class ApiError(Exception):
 
 def _query(params):
     return urlencode([(k, v) for k, v in params.items() if v is not None and v != ""])
+
+
+def _filters(genre, origin, flat=False):
+    """Only the catalog filters that are set, so a call without filters sends exactly the old request."""
+    found = {}
+    if genre:
+        found["genre"] = genre
+    if origin:
+        found["origin"] = ORIGIN_CZSK
+    if flat:
+        found["flat"] = 1
+    return found
 
 
 class _SafeRedirect(urllib.request.HTTPRedirectHandler):
@@ -114,16 +126,24 @@ class Catalog:
     def letters(self, kind):
         return self._get("/v1/letters", type=kind)
 
-    def titles(self, kind, letter, sort, page, per_page, prefix=None, exact=False):
-        """One page of titles; with `prefix` (a-z0-9) the letter is ignored by the API, `exact` keeps only skey == prefix."""
+    def genres(self, kind, origin=False):
+        """[{genre,n}] biggest first (IMDb English names); `origin` limits it to Czech/Slovak productions."""
+        return self._get("/v1/genres", type=kind, **_filters(None, origin))
+
+    def titles(self, kind, letter, sort, page, per_page, prefix=None, exact=False, genre=None, origin=False, flat=False):
+        """One page of titles; with `prefix` (a-z0-9) the letter is ignored by the API, `exact` keeps only skey == prefix.
+
+        `genre` (IMDb name), `origin` (Czech/Slovak only) and `flat` (whole type, no letter) are sent only when set.
+        """
         params = {"type": kind, "letter": letter, "sort": sort, "page": page, "per_page": per_page, "lang": self.lang}
         if prefix:
             params.update(prefix=prefix, exact=1 if exact else None)
+        params.update(_filters(genre, origin, flat))
         return self._get("/v1/titles", **params)
 
-    def prefixes(self, kind, prefix):
+    def prefixes(self, kind, prefix, genre=None, origin=False):
         """{prefix,total,exact,children:[{prefix,n}]} for the titles whose normalized name starts with `prefix`."""
-        return self._get("/v1/prefixes", type=kind, prefix=prefix)
+        return self._get("/v1/prefixes", type=kind, prefix=prefix, **_filters(genre, origin))
 
     def search(self, query, kind, sort, limit):
         return self._get("/v1/search", q=query, type=kind, sort=sort, limit=limit, lang=self.lang)
