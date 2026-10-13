@@ -54,8 +54,16 @@ jobs:
             dir="$(mktemp -d)"
             unzip -q "$zip" -d "$dir"
             echo "== $zip"
-            kodi-addon-checker --branch omega --skip-dependency-checks \
-              "$dir/plugin.video.abckasefi"
+            # The checker fetches the official add-on index from a
+            # random Kodi mirror; one bad mirror fails a good add-on.
+            # Retry up to three times before giving up.
+            for attempt in 1 2 3; do
+              kodi-addon-checker --branch omega --skip-dependency-checks \
+                "$dir/plugin.video.abckasefi" && break
+              [ "$attempt" = 3 ] && exit 1
+              echo "checker failed (attempt $attempt of 3), retrying in 20 s"
+              sleep 20
+            done
           done
       - uses: actions/upload-pages-artifact@v3
         with:
