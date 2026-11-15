@@ -11,6 +11,9 @@ from .const import KINDS, S_ADDON_NAME
 from .log import log
 
 CHUNK = 200  # items per xbmcplugin.addDirectoryItems call
+# Kodi replaces the ListItem label with the sort method's mask, so the year is added by mask ([...] = only if set)
+MOVIE_LABEL_MASK = "%T[ (%Y)]"
+MOVIE_LABEL2_MASK = "%R"  # the tag's rating with one decimal; empty when fill_title set none (unreliable rating)
 LETTER_RE = re.compile(r"^(?:[A-Z]|0-9)$")
 KEY_RE = re.compile(r"^[A-Za-z0-9_-]{1,64}$")
 GENRE_RE = re.compile(r"^[A-Za-z][A-Za-z-]{0,30}$")
@@ -128,3 +131,11 @@ def show(handle, entries, content, update=False, label_mask="", label2_mask=""):
     else:
         xbmcplugin.addSortMethod(handle, xbmcplugin.SORT_METHOD_NONE)
     xbmcplugin.endOfDirectory(handle, succeeded=True, updateListing=update, cacheToDisc=False)
+
+
+def show_titles(handle, entries, content, update=False):
+    """`show` for lists of catalog titles: movie and mixed lists get the year and rating masks, series-only lists none."""
+    if content in ("movies", "videos"):
+        show(handle, entries, content, update, MOVIE_LABEL_MASK, MOVIE_LABEL2_MASK)
+    else:
+        show(handle, entries, content, update)

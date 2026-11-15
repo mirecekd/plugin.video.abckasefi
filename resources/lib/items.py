@@ -11,6 +11,7 @@ import xbmcgui
 
 from . import urls
 from .const import S_INFO, S_SPECIALS, S_WATCHED_EPS
+from .plot_fallback import fallback_plot
 
 MOVIE, SERIES = "movie", "series"
 
@@ -37,9 +38,10 @@ def fill_title(tag, data):
 
 
 def set_plot(tag, data):
-    """Plot from the list answer's `overview`, only when there is one (the catalog fills it from its cache)."""
-    if data.get("overview"):
-        tag.setPlot(data["overview"])
+    """Plot from the list answer's `overview` (the catalog fills it from its cache), else genres and rating."""
+    plot = data.get("overview") or fallback_plot(data)
+    if plot:
+        tag.setPlot(plot)
 
 
 def label_of(data):

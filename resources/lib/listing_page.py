@@ -45,4 +45,4 @@ def finish_page(handle, catalog, data, kind, page, next_params, head=()):
         common.notify(texts.t(S_NO_RESULTS))
     if data.get("has_more"):
         entries.append(folder(texts.t(S_NEXT_PAGE), **dict(next_params, page=page + 1)))
-    common.show(handle, entries, common.content_for(data, kind), update=page > 1)
+    common.show_titles(handle, entries, common.content_for(data, kind), update=page > 1)

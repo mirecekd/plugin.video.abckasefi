@@ -42,18 +42,29 @@ def other_screens(tmp_path, monkeypatch, ui, cat):
     "query",
     [
         "?action=letters&kind=movie",
-        "?action=titles&kind=movie&letter=K&sort=name",
         "?action=seasons&id=" + TT,
         "?action=recent",
         "?action=resume&id=" + TT,
-        "?action=search",
-        "?action=tmdb_list&kind=movie&key=top&page=1",
     ],
 )
 def test_other_screens_add_the_sort_method_without_masks(ui, other_screens, query):
     run(query)
     assert ui.sorts == [xbmcplugin.SORT_METHOD_NONE]
     assert ui.sort_masks == [{}]
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "?action=titles&kind=movie&letter=K&sort=name",
+        "?action=search",
+        "?action=tmdb_list&kind=movie&key=top&page=1",
+    ],
+)
+def test_title_screens_add_the_year_mask(ui, other_screens, query):
+    run(query)
+    assert ui.sorts == [xbmcplugin.SORT_METHOD_NONE]
+    assert ui.sort_masks == [{"labelMask": "%T[ (%Y)]", "label2Mask": "%R"}]
 
 
 def test_show_without_label_mask_keeps_the_plain_call(ui):

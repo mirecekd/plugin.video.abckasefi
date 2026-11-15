@@ -103,7 +103,7 @@ def search(handle, params):
     data = catalog.search(query, kind, SEARCH_SORT, cfg.per_page())
     if not data.get("items"):
         common.notify(texts.t(S_NO_RESULTS))
-    common.show(handle, common.entries_for(data, catalog, kind), common.content_for(data, kind))
+    common.show_titles(handle, common.entries_for(data, catalog, kind), common.content_for(data, kind))
 
 
 def lists(handle, params):
