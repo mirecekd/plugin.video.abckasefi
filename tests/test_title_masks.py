@@ -1,5 +1,5 @@
 # tests/test_title_masks.py
-"""Year and rating in title lists: movie and mixed lists pass Kodi the label masks, other lists keep the default."""
+"""Year and rating in title lists: movie, series and mixed lists pass Kodi the label masks, folder menus keep the default."""
 
 import pytest
 import xbmcplugin
@@ -31,11 +31,11 @@ def test_mixed_search_result_uses_the_masks(ui, cat):
     assert ui.content == ["videos"] and ui.sort_masks == MASKS
 
 
-def test_series_only_list_has_no_masks(ui, cat):
+def test_series_only_list_uses_the_masks(ui, cat):
     cat.data["titles"] = {"has_more": False, "items": [series(1), series(2)]}
     run("?action=titles&kind=series&letter=K&sort=name")
     assert ui.content == ["tvshows"]
-    assert ui.sort_masks == [{}]
+    assert ui.sort_masks == MASKS
 
 
 def test_flat_genre_list_uses_the_masks(ui, cat):
@@ -44,19 +44,31 @@ def test_flat_genre_list_uses_the_masks(ui, cat):
     assert ui.content == ["movies"] and ui.sort_masks == MASKS
 
 
+def test_series_flat_genre_list_uses_the_masks(ui, cat):
+    cat.data["titles"] = {"has_more": True, "items": [series(1)]}
+    run("?action=flat&kind=series&genre=Drama&page=1")
+    assert ui.content == ["tvshows"] and ui.sort_masks == MASKS
+
+
+def test_series_tmdb_list_uses_the_masks(ui, cat):
+    cat.data["tmdb_list"] = {"has_more": False, "items": [series(1)]}
+    run("?action=tmdb_list&kind=series&key=top&page=1")
+    assert ui.content == ["tvshows"] and ui.sort_masks == MASKS
+
+
 def test_tmdb_list_uses_the_masks(ui, cat):
     cat.data["tmdb_list"] = {"has_more": False, "items": [movie(1)]}
     run("?action=tmdb_list&kind=movie&key=top&page=1")
     assert ui.sort_masks == MASKS
 
 
-@pytest.mark.parametrize("content", ["movies", "videos"])
+@pytest.mark.parametrize("content", ["movies", "tvshows", "videos"])
 def test_show_titles_passes_both_masks(ui, content):
     listing_common.show_titles(7, [], content)
     assert ui.sort_masks == MASKS
 
 
-@pytest.mark.parametrize("content", ["tvshows", "files"])
+@pytest.mark.parametrize("content", ["files", "seasons", "episodes"])
 def test_show_titles_leaves_other_content_unmasked(ui, content):
     listing_common.show_titles(7, [], content)
     assert ui.sort_masks == [{}]

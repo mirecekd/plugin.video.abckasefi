@@ -10,6 +10,7 @@ Rules that make Kodi's own watched feature work (see SPEC.md):
 import xbmcgui
 
 from . import urls
+from .art import tmdb_poster_url
 from .const import S_INFO, S_SPECIALS, S_WATCHED_EPS
 from .plot_fallback import fallback_plot
 
@@ -49,8 +50,9 @@ def label_of(data):
     return f"{title} ({data['year']})" if data.get("year") else title
 
 
-def _art(item, catalog, tt):
-    url = catalog.poster_url(tt) if catalog else ""
+def _art(item, catalog, data):
+    """Poster from the list item's direct TMDB URL, else from the catalog poster endpoint."""
+    url = tmdb_poster_url(data) or (catalog.poster_url(data["id"]) if catalog else "")
     if url:
         item.setArt({"poster": url, "thumb": url, "icon": url})
 
@@ -60,7 +62,7 @@ def movie_item(data, catalog):
     item = xbmcgui.ListItem(label=label_of(data), offscreen=True)
     fill_title(_tag(item, MOVIE), data)
     set_plot(item.getVideoInfoTag(), data)
-    _art(item, catalog, data["id"])
+    _art(item, catalog, data)
     item.setProperty("IsPlayable", "true")
     add_info_menu(item, data["id"])
     return urls.nokturno_movie_url(data["id"]), item, False
@@ -73,7 +75,7 @@ def series_item(data, catalog, watched=None):
     fill_title(tag, data)
     tag.setTvShowTitle(data.get("title") or "")
     set_plot(tag, data)
-    _art(item, catalog, data["id"])
+    _art(item, catalog, data)
     apply_progress(item, tag, watched)
     add_info_menu(item, data["id"])
     return urls.build_url(action="seasons", id=data["id"]), item, True

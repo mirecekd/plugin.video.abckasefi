@@ -57,6 +57,7 @@ def test_other_screens_add_the_sort_method_without_masks(ui, other_screens, quer
     "query",
     [
         "?action=titles&kind=movie&letter=K&sort=name",
+        "?action=titles&kind=series&letter=K&sort=name",
         "?action=search",
         "?action=tmdb_list&kind=movie&key=top&page=1",
     ],
